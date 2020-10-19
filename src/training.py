@@ -10,10 +10,11 @@ import torch.nn as nn
 import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
+from storm import train_loop_storm
 
 def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
                     lr=0.001, momentum=0.0, svrg_freq=5.0, seed=1,
-                    log_interval = 1, cuda=True):
+                    log_interval = 1, cuda=True, k=0.1, w=0.1, c=0.1):
     """
     Create basic arguments for model training
 
@@ -38,6 +39,12 @@ def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
         Number of epochs netween logs. The default is 1.
     cuda : bool, optional
         cuda available. The default is True.
+    k : float, optional
+        k parameter for STORM. The default is 0.1 (from paper)
+    w : float, optional
+        w parameter for STORM. The default is 0.1 (from paper)
+    c : float, optional
+        c parameter for STORM. The default is 0.1 (arbitarily)
 
     Returns
     -------
@@ -56,6 +63,9 @@ def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
     args['seed']=seed
     args['log_interval']=log_interval
     args['cuda'] = cuda
+    args['k'] = k
+    args['w'] = w
+    args['c'] = c
     return args
 
 def build_return_dict_optim(train_losses, test_losses, train_accuracies,
@@ -140,7 +150,7 @@ def train_loop(algo, model, trainloader, testloader, args):
     Parameters
     ----------
     algo : str
-        'SVRG', 'ADAM' or 'SGD'.
+        'SVRG', 'ADAM','SGD' or 'STORM'.
     model : torch.nn.Module
         model to train
     trainloader : torch.utils.data.DataLoader
@@ -167,7 +177,7 @@ def train_loop(algo, model, trainloader, testloader, args):
         dictionary with output of the training loop.
 
     """
-    available_algo_names = ('SVRG', 'ADAM', 'SGD')
+    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
     if algo not in available_algo_names:
@@ -222,7 +232,7 @@ def train_loop(algo, model, trainloader, testloader, args):
         return build_return_dict_optim(train_losses, test_losses,
                                        train_accuracies, test_accuracies, model, optimizer)
     
-    else:
+    elif algo == 'SVRG':
         train_losses, test_losses, train_accuracies, test_accuracies, model, \
         snapshot_model, curr_batch_iter = \
             train_loop_SVRG(model, trainloader, testloader, args['lr'], 
@@ -233,3 +243,9 @@ def train_loop(algo, model, trainloader, testloader, args):
         return build_return_dict_svrg(train_losses, test_losses, train_accuracies,
                                       test_accuracies, model, snapshot_model,
                                       curr_batch_iter )
+    else : 
+        train_losses, test_losses, train_accuracies, test_accuracies = \
+            train_loop_storm(model, trainloader, testloader, 
+                             k=args['k'], w=args['w'], c=args['c'],
+                             criterion = criterion, epochs_to_run=args['epochs'],
+                             log_interval=args['log_interval'], cuda=args['cuda'])

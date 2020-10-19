@@ -111,12 +111,12 @@ def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion, e
         with torch.no_grad():
             test_loss_epoch = test(model, testloader, criterion, cuda)
             test_losses.append(test_loss_epoch)
-        
-        if epoch%log_interval == 0:
             train_acc = get_accuracy(model, trainloader, cuda)
             train_accuracies.append(train_acc)
             test_acc = get_accuracy(model, testloader, cuda)
             test_accuracies.append(test_acc)
+            
+        if epoch%log_interval == 0: 
             print(f'{datetime.now().time().replace(microsecond=0)} --- '
                   f'Epoch: {epoch}\t'
                   f'Train loss: {train_loss_epoch:.4f}\t'

@@ -34,10 +34,8 @@ def update_grad_svrg(params, snapshot_params, mu):
         params[i].grad.data.sub_(snapshot_params[i].grad.data)
         params[i].grad.data.add_(mu[i])
 
-def update_params_svrg(params, learning_rate):
-    raise NotImplementedError()
     
-def svrg_train(model, snapshot_model, trainloader, learning_rate, freq, criterion, start_batch_iter, mu, cuda):
+def svrg_train_epoch(model, snapshot_model, trainloader, learning_rate, freq, criterion, start_batch_iter, mu, cuda):
     model.train()
     running_loss = 0
     curr_batch_iter = start_batch_iter
@@ -45,9 +43,7 @@ def svrg_train(model, snapshot_model, trainloader, learning_rate, freq, criterio
 
         if curr_batch_iter%freq == 0:
             print("Creatig new model snapshot at batch iteration {}".format(curr_batch_iter))
-            print(datetime.now().time())
             snapshot_model = copy.deepcopy(model)
-            print(datetime.now().time())
             if cuda:
                 snapshot_model = snapshot_model.cuda()
             mu = calculate_mu(snapshot_model, trainloader, criterion, cuda)
@@ -92,7 +88,7 @@ def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq, criteri
     mu = None
     for epoch in range(epochs_to_run):
         train_loss_epoch, model, snapshot_model, curr_batch_iter, mu = \
-            svrg_train(model, snapshot_model, trainloader, learning_rate,
+            svrg_train_epoch(model, snapshot_model, trainloader, learning_rate,
                        freq, criterion, curr_batch_iter, mu, cuda)
             
         train_losses.append(train_loss_epoch)
@@ -100,12 +96,12 @@ def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq, criteri
         with torch.no_grad():
             test_loss_epoch = test(model, testloader, criterion, cuda)
             test_losses.append(test_loss_epoch)
-        
-        if epoch%log_interval == 0:
             train_acc = get_accuracy(model, trainloader, cuda)
             train_accuracies.append(train_acc)
             test_acc = get_accuracy(model, testloader, cuda)
             test_accuracies.append(test_acc)
+            
+        if epoch%log_interval == 0:         
             print(f'{datetime.now().time().replace(microsecond=0)} --- '
                   f'Epoch: {epoch}\t'
                   f'Train loss: {train_loss_epoch:.4f}\t'

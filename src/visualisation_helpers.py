@@ -48,5 +48,6 @@ def plot_metrics(dict_after_training, title, kind='both', metric='loss', period_
     plt.xlabel(period_name)
     if log_yscale:
         plt.yscale('log')
+    plt.title(title)
     plt.legend()
     plt.show()
