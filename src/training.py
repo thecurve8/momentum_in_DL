@@ -11,8 +11,7 @@ import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
 
-def main_train_loop(algo, model, epochs_to_run, lr, momentum, svrg_freq,
-                    trainloader, testloader, log_interval, cuda):
+def main_train_loop(algo, model, trainloader, testloader, *args):
     available_algo_names = ('SVRG', 'ADAM', 'SGD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
@@ -21,44 +20,53 @@ def main_train_loop(algo, model, epochs_to_run, lr, momentum, svrg_freq,
                           " got {}".format(algo))
     if not isinstance(model, torch.nn.Module):
         raise TypeError("Expected torch.nn.Module for model. Got: {}".format(type(model)))
-    if not isinstance(epochs_to_run, int) :
-        raise TypeError("Expected int for epochs_to_run. Got {}".format(type(epochs_to_run)))
-    if epochs_to_run < 1:
-        raise ValueError("Expected strictly positive for epochs_to_run. Got {}".format(epochs_to_run))
-    if not (isinstance(lr, float) or isinstance(lr, int)):
-        raise TypeError("Expected float or int for lr. Got {}".format(type(lr)))
-    if lr<=0:
-        raise ValueError("Expected strictly positive value for lr. Got {}".format(lr))
-    if not (isinstance(momentum, float) or isinstance(momentum, int)):
-        raise TypeError("Expected float or int for momentum. Got {}".format(type(momentum)))
-    if momentum<0:
-        raise ValueError("Expected non-negative value for momentum. Got {}".format(momentum))
-    if not (isinstance(svrg_freq, float), isinstance(svrg_freq, int)):
-        raise TypeError("Expected float or int for svrg_freq. Got {}".format(type(svrg_freq)))
-    if svrg_freq <= 0:
-        raise ValueError("Expected strictly positive value for svrg_freq. Got {}".format(svrg_freq))
+    if not isinstance(args['epochs'], int) :
+        raise TypeError("Expected int for epochs. Got {}".format(type(args['epochs'])))
+    if args['epochs'] < 1:
+        raise ValueError("Expected strictly positive for epochs. Got {}".format(args['epochs']))
+    if not (isinstance(args['lr'], float) or isinstance(args['lr'], int)):
+        raise TypeError("Expected float or int for lr. Got {}".format(type(args['lr'])))
+    if args['lr']<=0:
+        raise ValueError("Expected strictly positive value for lr. Got {}".format(args['lr']))
+    if not (isinstance(args['momentum'], float) or isinstance(args['momentum'], int)):
+        raise TypeError("Expected float or int for momentum. Got {}".format(type(args['momentum'])))
+    if args['momentum']<0:
+        raise ValueError("Expected non-negative value for momentum. Got {}".format(args['momentum']))
+    if not (isinstance(args['svrg_freq'], float), isinstance(args['svrg_freq'], int)):
+        raise TypeError("Expected float or int for svrg_freq. Got {}".format(type(args['svrg_freq'])))
+    if args['svrg_freq'] <= 0:
+        raise ValueError("Expected strictly positive value for svrg_freq. Got {}".format(args['svrg_freq']))
     
     batch_size = trainloader.batch_size
     
-    if cuda:
+    if batch_size != args['batch_size']:
+        raise Warning("batch_size argument and trainloader batch_size are different. {} - {}".format(
+            args['batch_size'], batch_size))
+    
+    test_batch_size = testloader.batch_size
+    if test_batch_size != args['test_batch_size']:
+        raise Warning("test_batch_size argument and testloader batch_size are different. {} - {}".format(
+            args['test_batch_size'], test_batch_size))
+    
+    if args['cuda']:
         model.cuda()
     
     criterion = nn.CrossEntropyLoss()
 
     if algo == 'SGD' or algo == 'ADAM':
         if algo == 'SGD':
-            optimizer = optim.SGD(model.parameters(), lr=lr)
+            optimizer = optim.SGD(model.parameters(), lr=args['lr'])
         else:
-            optimizer = optim.Adam(model.parameters(), lr=lr)
+            optimizer = optim.Adam(model.parameters(), lr=args['lr'])
 
         train_losses, test_losses, train_accuracies, test_accuracies, model, \
         optimizer = train_loop_optimizer(model, trainloader, testloader,
-                            optimizer, criterion, epochs_to_run,
-                            log_interval=log_interval, cuda=cuda)
+                            optimizer, criterion, args['epochs'],
+                            log_interval=args['log_interval'], cuda=args['cuda'])
     else:
         train_losses, test_losses, train_accuracies, test_accuracies, model, \
         snapshot_model, curr_batch_iter = \
-            train_loop_SVRG(model, trainloader, testloader, lr, 
-                            freq = svrg_freq*len(trainloader.dataset)/batch_size, 
-                            criterion = criterion, epochs_to_run=epochs_to_run,
-                            log_interval=log_interval, cuda=cuda)
+            train_loop_SVRG(model, trainloader, testloader, args['lr'], 
+                            freq = args['svrg_freq']*len(trainloader.dataset)/batch_size, 
+                            criterion = criterion, epochs_to_run=args['epochs'],
+                            log_interval=args['log_interval'], cuda=args['cuda'])
