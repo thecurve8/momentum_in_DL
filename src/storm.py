@@ -58,7 +58,6 @@ def train_loop_storm(model, trainloader, testloader, k, w, c, criterion,
                     
                     a.append(c*pow(learning_rate,2))
                     d.append(p_grad)
-                    first_pass = False
                 else:
                     last_p_grad = torch.clone(last_p.grad.data).detach()
                     p_grad = torch.clone(p.grad.data).detach()
@@ -68,9 +67,9 @@ def train_loop_storm(model, trainloader, testloader, k, w, c, criterion,
                     a[i] = c*pow(learning_rate,2)
                     last_model = copy.deepcopy(model)
                 p.data -= learning_rate * d[i]
-
-    
         
+        first_pass = False
+    
         train_loss_epoch = running_loss / len(trainloader.dataset)
         train_losses.append(train_loss_epoch)
         with torch.no_grad():
