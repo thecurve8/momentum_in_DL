@@ -45,7 +45,9 @@ def svrg_train(model, snapshot_model, trainloader, learning_rate, freq, criterio
 
         if curr_batch_iter%freq == 0:
             print("Creatig new model snapshot at batch iteration {}".format(curr_batch_iter))
+            print(datetime.now().time().replace(microsecond=0))
             snapshot_model = copy.deepcopy(model)
+            print(datetime.now().time().replace(microsecond=0))
             if cuda:
                 snapshot_model = snapshot_model.cuda()
             mu = calculate_mu(snapshot_model, trainloader, criterion, cuda)

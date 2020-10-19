@@ -6,7 +6,8 @@ Created on Mon Oct 19 18:23:05 2020
 """
 import matplotlib.pyplot as plt
 
-def plot_metrics(dict_after_training, kind='both', metric='loss', period_name = 'Epoch', first_index=0, last_value=-1, log_yscale=False):
+def plot_metrics(dict_after_training, title, kind='both', metric='loss', period_name = 'Epoch',
+                 first_index=0, last_value=-1, log_yscale=False):
     """
     Plots the train metric and optionally the test metric
 
@@ -14,6 +15,8 @@ def plot_metrics(dict_after_training, kind='both', metric='loss', period_name = 
     ----------
     train_losses : dict
         dictionary after training process
+    title : str
+        title of the plot
     kind : str, optional
         Which values to plot, 'both', 'test', 'train'. Default is 'both'
     metric : str, optional
