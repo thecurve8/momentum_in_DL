@@ -24,7 +24,7 @@ def train_loop_storm(model, trainloader, testloader, k, w, c, criterion,
     first_pass = True
     
     
-    for epoch in epochs_to_run:
+    for epoch in range(epochs_to_run):
         model.train()
         running_loss = 0
         
