@@ -12,7 +12,10 @@ import torch.nn.functional as F
 class LeNet(nn.Module):
     """
     A class used to model a LeNet-5 network
-
+    http://yann.lecun.com/exdb/lenet/ and 
+    https://towardsdatascience.com/convolutional-neural-network-champions-part-1-lenet-5-7a8d6eb98df6
+    
+    
     Methods
     -------
     forward(x)
