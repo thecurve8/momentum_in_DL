@@ -20,6 +20,7 @@ def plot_metrics(train_metric, test_metric=None, metric_name='Loss', period_name
     period_name : str, optional
         Name of the period between each measurment of the metric, default: 'Epoch'
     """
+    
     plt.plot(train_metric, 'b-', label='train')
     if test_metric:
         plt.plot(test_metric, 'r-', label='test')
