@@ -6,25 +6,44 @@ Created on Mon Oct 19 18:23:05 2020
 """
 import matplotlib.pyplot as plt
 
-def plot_metrics(train_metric, test_metric=None, metric_name='Loss', period_name = 'Epoch'):
-    """Plots the train metric and optionally the test metric
+def plot_metrics(dict_after_training, kind='both', metric='loss', period_name = 'Epoch', first_index=0, last_value=-1, log_yscale=False):
+    """
+    Plots the train metric and optionally the test metric
 
     Parameters
     ----------
-    train_losses : list
-        List of losses during training
-    test_losses : list, optional
-        List of test losses, if None nothing will be displayed, default: None
-    metric_name : str, optional
-        Name of the plotted metric, default: 'Loss'
+    train_losses : dict
+        dictionary after training process
+    kind : str, optional
+        Which values to plot, 'both', 'test', 'train'. Default is 'both'
+    metric : str, optional
+        Name of the plotted metric 'loss' or 'accu', default: 'loss'
     period_name : str, optional
         Name of the period between each measurment of the metric, default: 'Epoch'
-    """
+    first_index : int, optional
+        index of the first vaue to plot. Default is 0
+    last_inex : int, optional
+        index of the last value to plot. Default is -1
+    log_yscale : bool
+        Default is False
     
-    plt.plot(train_metric, 'b-', label='train')
-    if test_metric:
-        plt.plot(test_metric, 'r-', label='test')
+    
+    """
+    if metric == 'loss':
+        key = "_losses"
+        plt.ylabel("Loss")
+        
+    if metric == 'accu':
+        key = "_accuracies"
+        plt.ylabel("Accuracy")
+        
+    if kind == 'both' or kind =='train':    
+        plt.plot(dict_after_training['test'+key], 'b-', label='train')
+        
+    if kind == 'both' or kind == 'test':
+        plt.plot(dict_after_training['train'+key], 'r-', label='test')
     plt.xlabel(period_name)
-    plt.ylabel(metric_name)
+    if log_yscale:
+        plt.yscale('log')
     plt.legend()
     plt.show()

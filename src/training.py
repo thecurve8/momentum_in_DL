@@ -11,7 +11,7 @@ import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
 
-def create_arguments(batch_size=32, test_batch_size=32, epochs=32,
+def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
                     lr=0.001, momentum=0.0, svrg_freq=5.0, seed=1,
                     log_interval = 1, cuda=True):
     """
@@ -24,7 +24,7 @@ def create_arguments(batch_size=32, test_batch_size=32, epochs=32,
     test_batch_size : int, optional
         The default is 32.
     epochs : int, optional
-        Epochs to run. The default is 32.
+        Epochs to run. The default is 20.
     lr : float, optional
         Learning rate. The default is 0.001.
     momentum : float, optional
