@@ -11,7 +11,7 @@ import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
 
-def main_train_loop(algo, model, trainloader, testloader, *args):
+def main_train_loop(algo, model, trainloader, testloader, args):
     available_algo_names = ('SVRG', 'ADAM', 'SGD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
