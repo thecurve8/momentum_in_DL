@@ -25,6 +25,7 @@ class STORM(torch.optim.Optimizer):
         self.total_time = 0
     
     def step(self):
+        print("Step")
         for group in self.param_groups:
             for p in group['params']:
                 state = self.state[p]
@@ -42,6 +43,7 @@ class STORM(torch.optim.Optimizer):
         self.step_num += 1
 
     def update_momentum(self):
+        print("update moentum")
         for group in self.param_groups:
             for p in group['params']:
                 gt = p.grad.data
@@ -68,6 +70,8 @@ class STORM(torch.optim.Optimizer):
                 state['recorded_gt'] = None
 
     def clone_grad(self):
+        print("clone_grad")
+
         for group in self.param_groups:
             for p in group['params']:
                 gt = p.grad.data
