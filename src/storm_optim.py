@@ -43,7 +43,7 @@ class STORM(torch.optim.Optimizer):
         self.step_num += 1
 
     def update_momentum(self):
-        print("update moentum")
+        print("update momentum")
         for group in self.param_groups:
             for p in group['params']:
                 gt = p.grad.data
@@ -100,6 +100,7 @@ def train_loop_storm_optim(model, trainloader, testloader, k, w, c, criterion,
             
             if first_pass:
                 optmz.update_momentum()
+                first_pass = False
             else:
                 # record the grad for updating momentum
                 optmz.clone_grad()
@@ -114,7 +115,7 @@ def train_loop_storm_optim(model, trainloader, testloader, k, w, c, criterion,
                 # update the momentum d_t
                 optmz.update_momentum()
             running_loss += loss.item() * data.size(0)
-        first_pass = False    
+            
         train_loss_epoch = running_loss / len(trainloader.dataset)
         train_losses.append(train_loss_epoch)
     
