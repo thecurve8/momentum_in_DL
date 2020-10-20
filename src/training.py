@@ -11,6 +11,7 @@ import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
 from storm import train_loop_storm
+from storm_optim import train_loop_storm_optim
 
 def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
                     lr=0.001, momentum=0.0, svrg_freq=5.0, seed=1,
@@ -141,7 +142,7 @@ def build_return_dict_svrg(train_losses, test_losses, train_accuracies,
     return return_values
 
 def build_return_dict_storm(train_losses, test_losses, train_accuracies,
-                           test_accuracies):
+                           test_accuracies, model_state_dict):
     """
     Creates a dictionary with the output of the train_loop with svrg
    
@@ -156,6 +157,8 @@ def build_return_dict_storm(train_losses, test_losses, train_accuracies,
         train accuracies after each epoch.
     test_accuracies : list of float
         test accuracies after each epoch.
+    model_state_dict : dict
+        dictionary of the state of the model after training
 
     Returns
     -------
@@ -168,6 +171,7 @@ def build_return_dict_storm(train_losses, test_losses, train_accuracies,
     return_values['test_losses']=test_losses
     return_values['train_accuracies']=train_accuracies
     return_values['test_accuracies']=test_accuracies
+    return_values['model_state_dict']=model_state_dict
 
     return return_values
 
@@ -272,10 +276,11 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
                                       test_accuracies, model_state_dict,
                                       snapshot_model_state_dict, curr_batch_iter )
     else : 
-        train_losses, test_losses, train_accuracies, test_accuracies = \
-            train_loop_storm(model, trainloader, testloader, 
-                             k=args['k'], w=args['w'], c=args['c'],
-                             criterion = criterion, epochs_to_run=args['epochs'],
-                             log_interval=args['log_interval'], cuda=args['cuda'])
+        train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict = \
+            train_loop_storm_optim(model, trainloader, testloader, k=args['k'],
+                                   w=args['w'], c=args['c'], criterion = criterion,
+                                   epochs_to_run=args['epochs'], 
+                                   log_interval=args['log_interval'], cuda=args['cuda'])
+
         return build_return_dict_storm(train_losses, test_losses,
-                                       train_accuracies, test_accuracies)
+                                       train_accuracies, test_accuracies, model_state_dict)
