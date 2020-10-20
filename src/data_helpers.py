@@ -19,8 +19,8 @@ def find_next_available_file_number(dir_algo, file_name):
     biggest_seen = -1
     for f in filteredfiles:
         x = f.split("_")
-        if x[-1]>biggest_seen:
-            biggest_seen = x[-1]
+        if int(x[-1])>biggest_seen:
+            biggest_seen = int(x[-1])
     return biggest_seen+1
 
 def float_to_str(float_value):
