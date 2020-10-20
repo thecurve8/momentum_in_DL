@@ -53,15 +53,14 @@ class STORM(torch.optim.Optimizer):
                     assert self.step_num == 0
                     # State initialization
                     state['step'] = 0
-                    state['sum_Gt_sq'] = torch.sum(gt*gt)
+                    state['sum_Gt_sq'] = 0#torch.sum(gt*gt)
                     state['recorded_gt'] = torch.zeros_like(p.data)
                     state['dt'] = gt.clone()
-                    state['at'] = 0
+                    state['at'] = 1
                     continue
 
                 gt_prev = state['recorded_gt']
-                assert not torch.allclose(gt, gt_prev), 'Please call clone_grad() in ' \
-                    'the previous step. '
+                #assert not torch.allclose(gt, gt_prev), 'Please call clone_grad() in ' 'the previous step. '
                 state['sum_Gt_sq'] += torch.sum(gt*gt)
                 dt = state['dt']
                 state['dt'] = gt + (1-state['at'])*(dt - gt_prev)
