@@ -143,6 +143,37 @@ def build_return_dict_svrg(train_losses, test_losses, train_accuracies,
     return_values['curr_batch_iter']=curr_batch_iter
     return return_values
 
+def build_return_dict_storm(train_losses, test_losses, train_accuracies,
+                           test_accuracies):
+    """
+    Creates a dictionary with the output of the train_loop with svrg
+   
+
+    Parameters
+    ----------
+    train_losses : list of float
+        train losses after each epoch.
+    test_losses : list of float
+        test losses after each epoch..
+    train_accuracies : list of float
+        train accuracies after each epoch.
+    test_accuracies : list of float
+        test accuracies after each epoch.
+
+    Returns
+    -------
+    return_values : dict
+        dictionary with mapped values.
+    """
+    
+    return_values = {}
+    return_values['train_losses']=train_losses
+    return_values['test_losses']=test_losses
+    return_values['train_accuracies']=train_accuracies
+    return_values['test_accuracies']=test_accuracies
+
+    return return_values
+
 def train_loop(algo, model, trainloader, testloader, args):
     """
     Main train loop for all algorithms
@@ -249,3 +280,5 @@ def train_loop(algo, model, trainloader, testloader, args):
                              k=args['k'], w=args['w'], c=args['c'],
                              criterion = criterion, epochs_to_run=args['epochs'],
                              log_interval=args['log_interval'], cuda=args['cuda'])
+        return build_return_dict_storm(train_losses, test_losses,
+                                       train_accuracies, test_accuracies)
