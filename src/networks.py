@@ -115,7 +115,7 @@ class LeNet_layer_norm(nn.Module):
         self.conv1 = nn.Conv2d(1, 6, kernel_size=5, padding=2, stride=1)
         self.layer_norm1 = nn.LayerNorm([6,28,28])
         self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
-        self.layer_norm2 = nn.LayerNorm([16,28,28])
+        self.layer_norm2 = nn.LayerNorm([16,10,10])
 
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.layer_norm3 = nn.LayerNorm(120)
