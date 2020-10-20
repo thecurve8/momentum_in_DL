@@ -63,7 +63,7 @@ def train_loop_storm(model, trainloader, testloader, k, w, c, criterion,
                     p_grad = torch.clone(p.grad.data).detach()
                     G_squarred_accu[i] += pow(torch.norm(p_grad), 2)
                     learning_rate = k/(pow((w+G_squarred_accu[i]),1/3)) 
-                    d[i] = p_grad + (1-a[i])*(d[i]-last_p_grad)
+                    d[i] = a[i]*p_grad + (1-a[i])*(d[i]-last_p_grad)
                     a[i] = c*pow(learning_rate,2)
                     last_model = copy.deepcopy(model)
                 p.data -= learning_rate * d[i]
