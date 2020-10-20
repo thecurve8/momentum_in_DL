@@ -66,7 +66,7 @@ def save_metrics(return_dict, algo, model_name, criterion_name, args):
         raise ValueError("Expected algo value in "+ str(available_algo_names) +
                          " got {}".format(algo))
 
-    dir_name = '/content/drive/My Drive/Semester Project MLO/saved/'
+    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
     dir_algo = os.path.join(dir_name, algo)
     
     file_name = create_name(algo, model_name, criterion_name, args, dir_algo)
