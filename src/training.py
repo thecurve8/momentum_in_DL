@@ -69,7 +69,7 @@ def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
     return args
 
 def build_return_dict_optim(train_losses, test_losses, train_accuracies,
-                            test_accuracies, model, optimizer):
+                            test_accuracies, model_state_dict):
     """
     Creates a dictionary with the output of the train_loop with optimizer
 
@@ -83,10 +83,8 @@ def build_return_dict_optim(train_losses, test_losses, train_accuracies,
         train accuracies after each epoch.
     test_accuracies : list of float
         test accuracies after each epoch.
-    model : torch.nn.Module
-        trained model.
-    optimizer : torch.nn.Optimizer
-        used optimizer.
+    model_state_dict : dict
+        trained model state dictionary.
 
     Returns
     -------
@@ -99,12 +97,11 @@ def build_return_dict_optim(train_losses, test_losses, train_accuracies,
     return_values['test_losses']=test_losses
     return_values['train_accuracies']=train_accuracies
     return_values['test_accuracies']=test_accuracies
-    return_values['model']=model
-    return_values['optimizer']=optimizer
+    return_values['model_state_dict']=model_state_dict
     return return_values
 
 def build_return_dict_svrg(train_losses, test_losses, train_accuracies,
-                           test_accuracies, model, snapshot_model,
+                           test_accuracies, model_state_dict, snapshot_model_state_dict,
                            curr_batch_iter):
     """
     Creates a dictionary with the output of the train_loop with svrg
@@ -120,10 +117,10 @@ def build_return_dict_svrg(train_losses, test_losses, train_accuracies,
         train accuracies after each epoch.
     test_accuracies : list of float
         test accuracies after each epoch.
-    model : torch.nn.Module
-        trained model.
-    snapshot_model : torch.nn.Module
-        trained model..
+    model_state_dict : dict
+        State dictionary of the trained model.
+    snapshot_model_state_dict : dict
+        State dictionary of the snapchot model.
     curr_batch_iter : int
         batch iteration after training.
 
@@ -138,8 +135,8 @@ def build_return_dict_svrg(train_losses, test_losses, train_accuracies,
     return_values['test_losses']=test_losses
     return_values['train_accuracies']=train_accuracies
     return_values['test_accuracies']=test_accuracies
-    return_values['model']=model
-    return_values['snapshot_model']=snapshot_model
+    return_values['model_state_dict']=model_state_dict
+    return_values['snapshot_model_state_dict']=snapshot_model_state_dict
     return_values['curr_batch_iter']=curr_batch_iter
     return return_values
 
@@ -251,29 +248,29 @@ def train_loop(algo, model, trainloader, testloader, args):
     
     if algo == 'SGD' or algo == 'ADAM':
         if algo == 'SGD':
-            optimizer = optim.SGD(model.parameters(), lr=args['lr'])
+            optimizer = optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
         else:
             optimizer = optim.Adam(model.parameters(), lr=args['lr'])
 
-        train_losses, test_losses, train_accuracies, test_accuracies, model, \
-        optimizer = train_loop_optimizer(model, trainloader, testloader,
+        train_losses, test_losses, train_accuracies, test_accuracies,\
+        model_state_dict = train_loop_optimizer(model, trainloader, testloader,
                             optimizer, criterion, args['epochs'],
                             log_interval=args['log_interval'], cuda=args['cuda'])
         
         return build_return_dict_optim(train_losses, test_losses,
-                                       train_accuracies, test_accuracies, model, optimizer)
+                                       train_accuracies, test_accuracies, model_state_dict)
     
     elif algo == 'SVRG':
-        train_losses, test_losses, train_accuracies, test_accuracies, model, \
-        snapshot_model, curr_batch_iter = \
+        train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict, \
+        snapshot_model_state_dict, curr_batch_iter = \
             train_loop_SVRG(model, trainloader, testloader, args['lr'], 
                             freq = args['svrg_freq']*len(trainloader.dataset)/batch_size, 
                             criterion = criterion, epochs_to_run=args['epochs'],
                             log_interval=args['log_interval'], cuda=args['cuda'])
             
         return build_return_dict_svrg(train_losses, test_losses, train_accuracies,
-                                      test_accuracies, model, snapshot_model,
-                                      curr_batch_iter )
+                                      test_accuracies, model_state_dict,
+                                      snapshot_model_state_dict, curr_batch_iter )
     else : 
         train_losses, test_losses, train_accuracies, test_accuracies = \
             train_loop_storm(model, trainloader, testloader, 

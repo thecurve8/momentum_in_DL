@@ -9,13 +9,55 @@ from os import listdir
 from os.path import isfile, join
 import pickle
 
-def find_next_available_file_number(dir):
-    onlypklfiles = [os.path.splitext(f)[0] for f in listdir(dir) if (isfile(join(dir, f)) and f.lower().endswith('.pkl'))]
-    return len(onlypklfiles)
+def find_next_available_file_number(dir_algo, file_name):
+    onlypklfiles = [os.path.splitext(f)[0] for f in listdir(dir_algo) if (isfile(join(dir_algo, f)) and f.lower().endswith('.pkl'))]
+    if len(onlypklfiles)==0:
+        return 0
+    filteredfiles = [f for f in onlypklfiles if f.startswith(file_name)]
+    if len(filteredfiles)==0:
+        return 0
+    biggest_seen = -1
+    for f in filteredfiles:
+        x = f.split("_")
+        if x[-1]>biggest_seen:
+            biggest_seen = x[-1]
+    return biggest_seen+1
+
+def float_to_str(float_value):
+    return str(float_value).replace('.', '^')
+
+def str_to_float(str_value):
+    return float(str_value.replace('^', '.'))
+
+def create_name(algo, model_name, criterion_name, args, dir_algo):
+    if algo == 'SVRG':
+        name = "svrg_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+float_to_str(args['lr'])+\
+                "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
+                float_to_str(args['svrg_freq'])+"_"
+        file_number = find_next_available_file_number(dir_algo, name)
+        name += str(file_number)+".pkl"
+        return name
+    if algo == 'SGD':
+        name = "sgd_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+float_to_str(args['lr'])+\
+                "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
+                float_to_str(args['momentum'])+"_"
+        file_number = find_next_available_file_number(dir_algo, name)
+        name += str(file_number)+".pkl"
+        return name
+    if algo == 'ADAM':
+        name = "adam_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+float_to_str(args['lr'])+\
+                "_"+str(args['seed'])+"_"+ criterion_name+"_" 
+                
+        file_number = find_next_available_file_number(dir_algo, name)
+        name += str(file_number)+".pkl"
+        return name
+    else:
+        raise NotImplementedError("Nothing defined for algo name {}".format(algo))
     
-def save_metrics(train_losses, test_losses, train_accuracies, test_accuracies,
-                 model, optimizer=None, snapshot_model=None,
-                 curr_batch_iter=None, algo='SVRG'):
+def save_metrics(return_dict, algo, model_name, criterion_name, args):
     
     available_algo_names = ('SVRG', 'ADAM', 'SGD')
     if not isinstance(algo, str):
@@ -26,10 +68,10 @@ def save_metrics(train_losses, test_losses, train_accuracies, test_accuracies,
 
     dir_name = '/content/drive/My Drive/Semester Project MLO/saved/'
     dir_algo = os.path.join(dir_name, algo)
-    last_file = find_next_available_file_number(dir_algo)
-    full_path = os.path.join(dir_algo, algo + '_stats' + str(last_file+1) +'.pkl')
+    
+    file_name = create_name(algo, model_name, criterion_name, args, dir_algo)
+    full_path = os.path.join(dir_algo, file_name)
+    
     with open(full_path, 'wb') as file:
-        if algo == 'SVRG':
-            pickle.dump([train_losses, test_losses, train_accuracies, test_accuracies, model, snapshot_model, curr_batch_iter], file)
-        else:
-            pickle.dump([train_losses, test_losses, train_accuracies, test_accuracies, model, optimizer], file)
+        pickle.dump(return_dict, file)
+        
