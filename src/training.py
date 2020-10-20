@@ -171,7 +171,7 @@ def build_return_dict_storm(train_losses, test_losses, train_accuracies,
 
     return return_values
 
-def train_loop(algo, model, trainloader, testloader, args):
+def train_loop(algo, model, trainloader, testloader, criterion, args):
     """
     Main train loop for all algorithms
 
@@ -185,6 +185,8 @@ def train_loop(algo, model, trainloader, testloader, args):
         Trainloader object.
     testloader : torch.utils.data.DataLoader
         Testloader object.
+    criterion : torch.nn._Loss
+        loss function.
     args : dict
         Dictionary with basic arguments used for training.
 
@@ -243,9 +245,7 @@ def train_loop(algo, model, trainloader, testloader, args):
     
     if args['cuda']:
         model.cuda()
-    
-    criterion = nn.CrossEntropyLoss()
-    
+        
     if algo == 'SGD' or algo == 'ADAM':
         if algo == 'SGD':
             optimizer = optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
