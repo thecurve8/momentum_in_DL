@@ -29,33 +29,45 @@ def float_to_str(float_value):
 def str_to_float(str_value):
     return float(str_value.replace('^', '.'))
 
-def create_name(algo, model_name, criterion_name, args, dir_algo):
+def create_name_beginning(algo, model_name, criterion_name, args):
     if algo == 'SVRG':
         name = "svrg_" + model_name+"_"+str(args['epochs'])+ \
                 "_"+float_to_str(args['lr'])+\
                 "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
                 float_to_str(args['svrg_freq'])+"_"
-        file_number = find_next_available_file_number(dir_algo, name)
-        name += str(file_number)+".pkl"
         return name
     if algo == 'SGD':
         name = "sgd_" + model_name+"_"+str(args['epochs'])+ \
                 "_"+float_to_str(args['lr'])+\
                 "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
                 float_to_str(args['momentum'])+"_"
-        file_number = find_next_available_file_number(dir_algo, name)
-        name += str(file_number)+".pkl"
         return name
     if algo == 'ADAM':
         name = "adam_" + model_name+"_"+str(args['epochs'])+ \
                 "_"+float_to_str(args['lr'])+\
                 "_"+str(args['seed'])+"_"+ criterion_name+"_" 
-                
-        file_number = find_next_available_file_number(dir_algo, name)
-        name += str(file_number)+".pkl"
         return name
     else:
         raise NotImplementedError("Nothing defined for algo name {}".format(algo))
+    
+def create_name(algo, model_name, criterion_name, args, dir_algo):
+    beginning_name = create_name_beginning(algo, model_name, criterion_name, args)
+    file_number = find_next_available_file_number(dir_algo, beginning_name)
+    name =beginning_name + str(file_number)+".pkl"
+    return name
+
+def check_name(algo, model_name, criterion_name, args, dir_algo, specified_file_number=-1):
+    beginning_name = create_name_beginning(algo, model_name, criterion_name, args)
+    #retrieve last file
+    if specified_file_number == -1:
+        file_number = find_next_available_file_number(dir_algo, beginning_name)
+        if file_number == 0:
+            return False, beginning_name+"xx"
+        else : 
+            return True, beginning_name + str(file_number-1)+".pkl"
+    else:
+        name = beginning_name + str(specified_file_number)+".pkl"
+        return os.path.isfile(name), name
     
 def save_metrics(return_dict, algo, model_name, criterion_name, args):
     
@@ -74,4 +86,25 @@ def save_metrics(return_dict, algo, model_name, criterion_name, args):
     
     with open(full_path, 'wb') as file:
         pickle.dump(return_dict, file)
+
+def load_metrics_dict(algo, model_name, criterion_name, args, specified_file_number=-1):
+    available_algo_names = ('SVRG', 'ADAM', 'SGD')
+    if not isinstance(algo, str):
+        raise TypeError("Expected str for algo. Got {}".format(type(algo)))
+    if algo not in available_algo_names:
+        raise ValueError("Expected algo value in "+ str(available_algo_names) +
+                         " got {}".format(algo))
+    
+    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
+    dir_algo = os.path.join(dir_name, algo)
+    
+    exists, file_name = check_name(algo, model_name, criterion_name, args, dir_algo,
+                              specified_file_number=specified_file_number)
+    if exists:    
+        full_path = os.path.join(dir_algo, file_name)
         
+        with open(full_path, 'rb') as f:
+            return pickle.load(f)
+    else:
+        print("File {} does not exist in directory {}".format(file_name, dir_algo))
+    
