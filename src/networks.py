@@ -62,7 +62,7 @@ class LeNet_batch_norm(nn.Module):
     """
     
     def __init__(self):
-        super(LeNet, self).__init__()
+        super(LeNet_batch_norm, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, kernel_size=5, padding=2, stride=1)
         self.batch_norm1 = nn.BatchNorm2d(num_features=6)
         self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
@@ -111,7 +111,7 @@ class LeNet_layer_norm(nn.Module):
     """
     
     def __init__(self):
-        super(LeNet, self).__init__()
+        super(LeNet_layer_norm, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, kernel_size=5, padding=2, stride=1)
         self.layer_norm1 = nn.LayerNorm([6,28,28])
         self.conv2 = nn.Conv2d(6, 16, kernel_size=5)
