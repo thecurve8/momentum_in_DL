@@ -56,6 +56,7 @@ class STORM(torch.optim.Optimizer):
                     state['sum_Gt_sq'] = torch.sum(gt*gt)
                     state['recorded_gt'] = torch.zeros_like(p.data)
                     state['dt'] = gt.clone()
+                    state['at'] = 0
                     continue
 
                 gt_prev = state['recorded_gt']
