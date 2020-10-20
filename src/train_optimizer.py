@@ -123,5 +123,5 @@ def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion, e
                   f'Test loss: {test_loss_epoch:.4f}\t'
                   f'Train accuracy: {100 * train_acc:.2f}\t'
                   f'Test accuracy: {100 * test_acc:.2f}')
-            
-    return train_losses, test_losses, train_accuracies, test_accuracies, model, optimizer
+    model_state_dict = model.state_dict()       
+    return train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict
