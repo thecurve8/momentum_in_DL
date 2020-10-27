@@ -56,7 +56,9 @@ def cross_validation_adam(model, learning_rates, dataset, K, criterion, args):
     validation_errors_during_training = np.zeros((K, len_learning_rate, int(args['epochs']//args['log_interval']) ))
     
     for i, lr in enumerate(learning_rates):
+        print("Training for learning rate={}".format(lr))
         for j, k in enumerate(range(K)):
+            print("Fold {}".format(k))
             trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
             optimizer = optim.Adam(model.parameters(), lr=lr)
 
