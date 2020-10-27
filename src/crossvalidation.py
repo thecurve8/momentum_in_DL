@@ -8,6 +8,7 @@ import numpy as np
 from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 from train_optimizer import train_loop_optimizer
+import copy
 
 def build_k_indices(n, K, seed):
     """Build k indices for k-fold cross-validation.
@@ -46,7 +47,7 @@ def create_train_val_dataloader(k, k_indices, dataset, args):
                                                    shuffle=True)
     return trainloader, validationloader
 
-def cross_validation_adam(model, learning_rates, dataset, K, criterion, args):
+def cross_validation_adam(model_initial, learning_rates, dataset, K, criterion, args):
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -59,6 +60,7 @@ def cross_validation_adam(model, learning_rates, dataset, K, criterion, args):
         print("Training for learning rate={}".format(lr))
         for j, k in enumerate(range(K)):
             print("Fold {}".format(k))
+            model = copy.deepcopy(model_initial)
             trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
             optimizer = optim.Adam(model.parameters(), lr=lr)
 
