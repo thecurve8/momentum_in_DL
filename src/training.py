@@ -275,7 +275,7 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
         return build_return_dict_svrg(train_losses, test_losses, train_accuracies,
                                       test_accuracies, model_state_dict,
                                       snapshot_model_state_dict, curr_batch_iter )
-    else : 
+    elif algo == 'STORM' : 
         train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict = \
             train_loop_storm_optim(model, trainloader, testloader, k=args['k'],
                                    w=args['w'], c=args['c'], criterion = criterion,

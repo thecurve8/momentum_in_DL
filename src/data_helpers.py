@@ -47,6 +47,13 @@ def create_name_beginning(algo, model_name, criterion_name, args):
                 "_"+float_to_str(args['lr'])+\
                 "_"+str(args['seed'])+"_"+ criterion_name+"_" 
         return name
+    if algo == 'STORM':
+        name = "storm_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+float_to_str(args['lr'])+\
+                "_"+str(args['seed'])+"_"+ criterion_name+\
+                "_"+str(args['k'])+"_"+ str(args['w'])+\
+                "_"+str(args['c'])+"_"
+        return name
     else:
         raise NotImplementedError("Nothing defined for algo name {}".format(algo))
     
@@ -71,7 +78,7 @@ def check_name(algo, model_name, criterion_name, args, dir_algo, specified_file_
     
 def save_metrics(return_dict, algo, model_name, criterion_name, args):
     
-    available_algo_names = ('SVRG', 'ADAM', 'SGD')
+    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
     if algo not in available_algo_names:

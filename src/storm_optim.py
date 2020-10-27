@@ -53,7 +53,8 @@ class STORM(torch.optim.Optimizer):
                     assert self.step_num == 0
                     # State initialization
                     state['step'] = 0
-                    state['sum_Gt_sq'] =torch.sum(gt*gt) # maybe need to change this
+                    # TODO check if below doesn't need to be initialized at 0
+                    state['sum_Gt_sq'] =torch.sum(gt*gt)
                     state['recorded_gt'] = torch.zeros_like(p.data)
                     state['dt'] = gt.clone()
                     state['at'] = 1
