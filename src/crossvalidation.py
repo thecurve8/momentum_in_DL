@@ -83,20 +83,23 @@ def cross_validation_adam(model_initial, learning_rates, dataset, K, criterion, 
                                        "CV adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
     return return_dict
 
-def cross_validation_sgd(model, learning_rates, dataset, K, criterion, args):
+def cross_validation_sgd(model_initial, learning_rates, dataset, K, criterion, args):
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
     len_learning_rate = len(learning_rates)
 
-    training_errors_during_training = np.zeros((K, len_learning_rate, args['epochs']))
-    validation_errors_during_training = np.zeros((K, len_learning_rate, int(args['epochs']//args['log_interval']) ))
+    training_errors_during_training = np.zeros((len_learning_rate, K, args['epochs']))
+    validation_errors_during_training = np.zeros((len_learning_rate, K, int(args['epochs']//args['log_interval']) ))
     
     training_accuracies_during_training = np.zeros((len_learning_rate, K, args['epochs']))
     validation_accuracies_during_training = np.zeros((len_learning_rate, K, int(args['epochs']//args['log_interval']) ))
     
     for i, lr in enumerate(learning_rates):
+        print("Training for learning rate={}".format(lr))
         for j, k in enumerate(range(K)):
+            print("Fold {}".format(k))
+            model = copy.deepcopy(model_initial)
             trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
             optimizer = optim.SGD(model.parameters(), lr=lr, momentum=args['momentum'])
 
@@ -104,18 +107,17 @@ def cross_validation_sgd(model, learning_rates, dataset, K, criterion, args):
                 train_loop_optimizer(model, trainloader, validationloader,
                                      optimizer, criterion, args['epochs'],
                                      args['log_interval'], args['cuda'])
-                
-            training_errors_during_training[i,j]=train_losses
-            validation_errors_during_training[i,j]=val_losses
+            
+            training_errors_during_training[i,j] = train_losses
+            validation_errors_during_training[i,j] = val_losses
             training_accuracies_during_training[i,j] = train_accuracies
             validation_accuracies_during_training[i,j] = val_accuracies
     return_dict = build_return_dict_CV(training_errors_during_training,
                                        validation_errors_during_training,
                                        training_accuracies_during_training,
                                        validation_accuracies_during_training,
-                                       "CV sgd lr:{}-{}".format(learning_rates[0], learning_rates[-1]))
-    
-    return return_dict    
+                                       "SGD adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
+    return return_dict
 
 def build_return_dict_CV(train_losses, validation_losses, train_accuracies,
                             validation_accuracies, description):
