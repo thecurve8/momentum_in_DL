@@ -49,16 +49,49 @@ def create_name_beginning(algo, model_name, criterion_name, args):
         return name
     if algo == 'STORM':
         name = "storm_" + model_name+"_"+str(args['epochs'])+ \
-                "_"+float_to_str(args['lr'])+\
                 "_"+str(args['seed'])+"_"+ criterion_name+\
                 "_"+str(args['k'])+"_"+ str(args['w'])+\
                 "_"+str(args['c'])+"_"
         return name
     else:
         raise NotImplementedError("Nothing defined for algo name {}".format(algo))
+        
+def create_name_beginning_cv(algo, model_name, criterion_name, args, from_value, to_value):
+    if algo == 'SVRG':
+        name = "svrg_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
+                float_to_str(args['svrg_freq'])+\
+                "_"+"from"+str(from_value)+"to"+str(to_value)+"_"
+        return name
+    if algo == 'SGD':
+        name = "sgd_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+str(args['seed'])+"_"+ criterion_name+"_" +\
+                float_to_str(args['momentum'])+\
+                "_"+"from"+str(from_value)+"to"+str(to_value)+"_"
+        return name
+    if algo == 'ADAM':
+        name = "adam_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+str(args['seed'])+"_"+ criterion_name+\
+                "_"+"from"+str(from_value)+"to"+str(to_value)+"_" 
+        return name
+    if algo == 'STORM':
+        name = "storm_" + model_name+"_"+str(args['epochs'])+ \
+                "_"+str(args['seed'])+"_"+ criterion_name+\
+                "_"+str(args['k'])+"_"+ str(args['w'])+\
+                "_"+str(args['c'])+\
+                "_"+"from"+str(from_value)+"to"+str(to_value)+"_"
+        return name
+    else:
+        raise NotImplementedError("Nothing defined for algo name {}".format(algo))
     
 def create_name(algo, model_name, criterion_name, args, dir_algo):
     beginning_name = create_name_beginning(algo, model_name, criterion_name, args)
+    file_number = find_next_available_file_number(dir_algo, beginning_name)
+    name =beginning_name + str(file_number)+".pkl"
+    return name
+
+def create_name_cv(algo, model_name, criterion_name, args, dir_algo, from_value, to_value):
+    beginning_name = create_name_beginning_cv(algo, model_name, criterion_name, args, from_value, to_value)
     file_number = find_next_available_file_number(dir_algo, beginning_name)
     name =beginning_name + str(file_number)+".pkl"
     return name
@@ -89,6 +122,23 @@ def save_metrics(return_dict, algo, model_name, criterion_name, args):
     dir_algo = os.path.join(dir_name, algo)
     
     file_name = create_name(algo, model_name, criterion_name, args, dir_algo)
+    full_path = os.path.join(dir_algo, file_name)
+    
+    with open(full_path, 'wb') as file:
+        pickle.dump(return_dict, file)
+
+def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_value):
+    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM')
+    if not isinstance(algo, str):
+        raise TypeError("Expected str for algo. Got {}".format(type(algo)))
+    if algo not in available_algo_names:
+        raise ValueError("Expected algo value in "+ str(available_algo_names) +
+                         " got {}".format(algo))
+
+    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
+    dir_algo = os.path.join(dir_name, algo)
+    
+    file_name = create_name_cv(algo, model_name, criterion_name, args, dir_algo, from_value, to_value)
     full_path = os.path.join(dir_algo, file_name)
     
     with open(full_path, 'wb') as file:
