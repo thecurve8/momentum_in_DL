@@ -98,12 +98,13 @@ def cross_validation_sgd(model, learning_rates, dataset, K, criterion, args):
     for i, lr in enumerate(learning_rates):
         for j, k in enumerate(range(K)):
             trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
-            optimizer = optim.Adam(model.parameters(), lr=lr)
+            optimizer = optim.SGD(model.parameters(), lr=lr, momentum=args['momentum'])
 
             train_losses, val_losses, train_accuracies, val_accuracies, _ =\
                 train_loop_optimizer(model, trainloader, validationloader,
                                      optimizer, criterion, args['epochs'],
                                      args['log_interval'], args['cuda'])
+                
             training_errors_during_training[i,j]=train_losses
             validation_errors_during_training[i,j]=val_losses
             training_accuracies_during_training[i,j] = train_accuracies
