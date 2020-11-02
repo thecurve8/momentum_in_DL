@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 from train_optimizer import train_loop_optimizer
 from svrg import train_loop_SVRG
+from storm_optim import train_loop_storm_optim
 import copy
 
 def build_k_indices(n, K, seed):
@@ -155,6 +156,43 @@ def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, 
                                        training_accuracies_during_training,
                                        validation_accuracies_during_training,
                                        "SVRG lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
+    return return_dict
+
+def cross_validation_storm(model_initial, c_values, dataset, K, criterion, args):
+    
+    k_indices = build_k_indices(len(dataset), K, args['seed'])
+    
+    len_c_values = len(c_values)
+
+    training_errors_during_training = np.zeros((len_c_values, K, args['epochs']))
+    validation_errors_during_training = np.zeros((len_c_values, K, int(args['epochs']//args['log_interval']) ))
+    
+    training_accuracies_during_training = np.zeros((len_c_values, K, args['epochs']))
+    validation_accuracies_during_training = np.zeros((len_c_values, K, int(args['epochs']//args['log_interval']) ))
+    
+    for i, c in enumerate(c_values):
+        print("Training for c_value={}".format(c))
+        for j, k in enumerate(range(K)):
+            print("Fold {}".format(k))
+            model = copy.deepcopy(model_initial)
+            trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
+            
+            
+            train_losses, val_losses, train_accuracies, val_accuracies, _ = \
+            train_loop_storm_optim(model, trainloader, validationloader, k=args['k'],
+                                   w=args['w'], c=c, criterion = criterion,
+                                   epochs_to_run=args['epochs'], 
+                                   log_interval=args['log_interval'], cuda=args['cuda'])
+            
+            training_errors_during_training[i,j] = train_losses
+            validation_errors_during_training[i,j] = val_losses
+            training_accuracies_during_training[i,j] = train_accuracies
+            validation_accuracies_during_training[i,j] = val_accuracies
+    return_dict = build_return_dict_CV(training_errors_during_training,
+                                       validation_errors_during_training,
+                                       training_accuracies_during_training,
+                                       validation_accuracies_during_training,
+                                       "STORM c:{}-{}".format(c_values[0], c_values[-1]))        
     return return_dict
 
 def build_return_dict_CV(train_losses, validation_losses, train_accuracies,
