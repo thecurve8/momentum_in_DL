@@ -117,7 +117,7 @@ def cross_validation_sgd(model_initial, learning_rates, dataset, K, criterion, a
                                        validation_errors_during_training,
                                        training_accuracies_during_training,
                                        validation_accuracies_during_training,
-                                       "SGD adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
+                                       "SGD lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
     return return_dict
 
 def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, args):
@@ -154,7 +154,7 @@ def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, 
                                        validation_errors_during_training,
                                        training_accuracies_during_training,
                                        validation_accuracies_during_training,
-                                       "SVRG adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
+                                       "SVRG lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
     return return_dict
 
 def build_return_dict_CV(train_losses, validation_losses, train_accuracies,
