@@ -8,6 +8,7 @@ import numpy as np
 from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 from train_optimizer import train_loop_optimizer
+from svrg import train_loop_SVRG
 import copy
 
 def build_k_indices(n, K, seed):
@@ -117,6 +118,43 @@ def cross_validation_sgd(model_initial, learning_rates, dataset, K, criterion, a
                                        training_accuracies_during_training,
                                        validation_accuracies_during_training,
                                        "SGD adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
+    return return_dict
+
+def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, args):
+    
+    k_indices = build_k_indices(len(dataset), K, args['seed'])
+    
+    len_learning_rate = len(learning_rates)
+
+    training_errors_during_training = np.zeros((len_learning_rate, K, args['epochs']))
+    validation_errors_during_training = np.zeros((len_learning_rate, K, int(args['epochs']//args['log_interval']) ))
+    
+    training_accuracies_during_training = np.zeros((len_learning_rate, K, args['epochs']))
+    validation_accuracies_during_training = np.zeros((len_learning_rate, K, int(args['epochs']//args['log_interval']) ))
+    
+    for i, lr in enumerate(learning_rates):
+        print("Training for learning rate={}".format(lr))
+        for j, k in enumerate(range(K)):
+            print("Fold {}".format(k))
+            model = copy.deepcopy(model_initial)
+            trainloader, validationloader = create_train_val_dataloader(k, k_indices, dataset, args)
+            
+            batch_size = trainloader.batch_size    
+            train_losses, val_losses, train_accuracies, val_accuracies, _, \
+            _, _ = train_loop_SVRG(model, trainloader, validationloader, lr, 
+                            freq = args['svrg_freq']*len(trainloader.dataset)/batch_size, 
+                            criterion = criterion, epochs_to_run=args['epochs'],
+                            log_interval=args['log_interval'], cuda=args['cuda'])
+            
+            training_errors_during_training[i,j] = train_losses
+            validation_errors_during_training[i,j] = val_losses
+            training_accuracies_during_training[i,j] = train_accuracies
+            validation_accuracies_during_training[i,j] = val_accuracies
+    return_dict = build_return_dict_CV(training_errors_during_training,
+                                       validation_errors_during_training,
+                                       training_accuracies_during_training,
+                                       validation_accuracies_during_training,
+                                       "SVRG adam lr:{}-{}".format(learning_rates[0], learning_rates[-1]))        
     return return_dict
 
 def build_return_dict_CV(train_losses, validation_losses, train_accuracies,
