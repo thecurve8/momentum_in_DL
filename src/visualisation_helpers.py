@@ -119,3 +119,82 @@ def plot_together(title, labels, styles, metric_dicts, metric = 'loss', kind='bo
         plt.yscale('log')    
     plt.legend()
     plt.show()
+    
+def compare_all(adam_return_dict, sgd_return_dict,svrg_return_dict, storm_return_dict):
+    """
+    Compare all metrics between ADAM, SGD, SVRG and STORM after training
+
+    Parameters
+    ----------
+    adam_return_dict : dict
+        Dictionary returned after training.
+    sgd_return_dict : dict
+        Dictionary returned after training.
+    svrg_return_dict : dict
+        Dictionary returned after training.
+    storm_return_dict : dict
+        Dictionary returned after training.
+
+    Returns
+    -------
+    None.
+
+    """
+    fig, axs = plt.subplots(2,2,sharex=True, figsize=(12,12))
+    adam_tr_acc = adam_return_dict['train_accuracies']
+    sgd_tr_acc = sgd_return_dict['train_accuracies']
+    svrg_tr_acc = svrg_return_dict['train_accuracies']
+    storm_tr_acc = storm_return_dict['train_accuracies']
+
+    adam_test_acc = adam_return_dict['test_accuracies']
+    sgd_test_acc = sgd_return_dict['test_accuracies']
+    svrg_test_acc = svrg_return_dict['test_accuracies']
+    storm_test_acc = storm_return_dict['test_accuracies']
+
+    adam_tr_loss = adam_return_dict['train_losses']
+    sgd_tr_loss = sgd_return_dict['train_losses']
+    svrg_tr_loss = svrg_return_dict['train_losses']
+    storm_tr_loss = storm_return_dict['train_losses']
+
+    adam_test_loss = adam_return_dict['test_losses']
+    sgd_test_loss = sgd_return_dict['test_losses']
+    svrg_test_loss = svrg_return_dict['test_losses']
+    storm_test_loss = storm_return_dict['test_losses']
+
+    axs[0,0].plot(adam_test_loss, label="Adam")
+    axs[0,0].plot(sgd_test_loss, label="SGD")
+    axs[0,0].plot(svrg_test_loss, label="SVRG")
+    axs[0,0].plot(storm_test_loss, label="STORM")
+
+    axs[0,1].plot(adam_tr_loss, label="Adam")
+    axs[0,1].plot(sgd_tr_loss, label="SGD")
+    axs[0,1].plot(svrg_tr_loss, label="SVRG")
+    axs[0,1].plot(storm_tr_loss, label="STORM")
+
+    axs[1,0].plot(adam_test_acc, label="Adam")
+    axs[1,0].plot(sgd_test_acc, label="SGD")
+    axs[1,0].plot(svrg_test_acc, label="SVRG")
+    axs[1,0].plot(storm_test_acc, label="STORM")
+
+    axs[1,1].plot(adam_tr_acc, label="Adam")
+    axs[1,1].plot(sgd_tr_acc, label="SGD")
+    axs[1,1].plot(svrg_tr_acc, label="SVRG")
+    axs[1,1].plot(storm_tr_acc, label="STORM")
+
+    axs[0,0].legend()
+    axs[0,0].set_title("Test Losses comparison")
+    axs[0,0].set_ylabel("Test loss")
+    axs[0,0].set_yscale('log')
+    axs[0,1].legend()
+    axs[0,1].set_title("Training Losses comparison")
+    axs[0,1].set_ylabel("Training loss")
+    axs[0,1].set_yscale('log')
+    axs[1,0].legend()
+    axs[1,0].set_title("Test Accuracy comparsion")
+    axs[1,0].set_ylabel("Test accuracy")
+    axs[1,0].set_xlabel("Epochs")
+    axs[1,1].legend()
+    axs[1,1].set_title("Training Losses comparison")
+    axs[1,1].set_ylabel("Training accuracy")
+    axs[1,1].set_xlabel("Epochs")
+    plt.show()
