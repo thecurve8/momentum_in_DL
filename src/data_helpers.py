@@ -90,6 +90,7 @@ def create_name_beginning_cv(algo, model_name, criterion_name, args, from_value,
         name = "adagrad_" + model_name+"_"+str(args['epochs'])+ \
                 "_"+str(args['seed'])+"_"+ criterion_name+\
                 "_"+"from"+str(from_value)+"to"+str(to_value)+"_" 
+        return name
     else:
         raise NotImplementedError("Nothing defined for algo name {}".format(algo))
     
