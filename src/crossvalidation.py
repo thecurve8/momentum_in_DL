@@ -207,7 +207,7 @@ def cross_validation_storm_k(model_initial, k_values, dataset, K, criterion, arg
     training_accuracies_during_training = np.zeros((len_k_values, K, args['epochs']))
     validation_accuracies_during_training = np.zeros((len_k_values, K, int(args['epochs']//args['log_interval']) ))
     
-    for i, k in enumerate(len_k_values):
+    for i, k in enumerate(k_values):
         print("Training for k_value={}".format(k))
         for j, k in enumerate(range(K)):
             print("Fold {}".format(k))
