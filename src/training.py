@@ -182,7 +182,7 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
     Parameters
     ----------
     algo : str
-        'SVRG', 'ADAM','SGD' or 'STORM'.
+        'SVRG', 'ADAM','SGD', 'STORM' or 'ADAGRAD.
     model : torch.nn.Module
         model to train
     trainloader : torch.utils.data.DataLoader
@@ -211,7 +211,7 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
         dictionary with output of the training loop.
 
     """
-    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM')
+    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM', 'ADAGRAD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
     if algo not in available_algo_names:
@@ -250,11 +250,13 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
     if args['cuda']:
         model.cuda()
         
-    if algo == 'SGD' or algo == 'ADAM':
+    if (algo == 'SGD') or (algo == 'ADAM') or (algo=='ADAGRAD'):
         if algo == 'SGD':
             optimizer = optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
-        else:
+        elif algo == 'ADAM':
             optimizer = optim.Adam(model.parameters(), lr=args['lr'])
+        elif algo == 'ADAGRAD':
+            optimizer = optim.Adagrad(model.parameters(), lr=args['lr'])
 
         train_losses, test_losses, train_accuracies, test_accuracies,\
         model_state_dict = train_loop_optimizer(model, trainloader, testloader,

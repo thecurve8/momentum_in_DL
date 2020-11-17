@@ -155,7 +155,7 @@ def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_
         pickle.dump(return_dict, file)
 
 def load_metrics_dict(algo, model_name, criterion_name, args, specified_file_number=-1):
-    available_algo_names = ('SVRG', 'ADAM', 'SGD')
+    available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM', 'ADAGRAD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
     if algo not in available_algo_names:
