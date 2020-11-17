@@ -270,7 +270,7 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
         train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict, \
         snapshot_model_state_dict, curr_batch_iter = \
             train_loop_SVRG(model, trainloader, testloader, args['lr'], 
-                            freq = args['svrg_freq']*len(trainloader.dataset)/batch_size, 
+                            freq = args['svrg_freq']*len(trainloader), 
                             criterion = criterion, epochs_to_run=args['epochs'],
                             log_interval=args['log_interval'], cuda=args['cuda'])
             
