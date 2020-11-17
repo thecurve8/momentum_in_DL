@@ -78,7 +78,9 @@ class STORM(torch.optim.Optimizer):
 
 
 def train_loop_storm_optim(model, trainloader, testloader, k, w, c, criterion,
-                     epochs_to_run, log_interval, cuda):
+                     epochs_to_run, log_interval, cuda,
+                     milestones = None, gamma = None):
+    
     optmz = STORM(model.parameters(), c, k, w)
     train_losses = []
     test_losses = []

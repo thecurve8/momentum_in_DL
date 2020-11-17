@@ -12,6 +12,7 @@ from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
 from storm import train_loop_storm
 from storm_optim import train_loop_storm_optim
+from torch.optim.lr_scheduler import MultiStepLR
 
 def create_arguments(batch_size=32, test_batch_size=32, epochs=20,
                     lr=0.001, momentum=0.0, svrg_freq=5.0, seed=1,
@@ -175,7 +176,7 @@ def build_return_dict_storm(train_losses, test_losses, train_accuracies,
 
     return return_values
 
-def train_loop(algo, model, trainloader, testloader, criterion, args):
+def train_loop(algo, model, trainloader, testloader, criterion, args, milestones=None, gamma=None):
     """
     Main train loop for all algorithms
 
@@ -193,6 +194,10 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
         loss function.
     args : dict
         Dictionary with basic arguments used for training.
+    milestones : list of int
+        milestones to schedule optimizers
+    gamma : float
+        rate at which to decrease lr
 
     Raises
     ------
@@ -257,11 +262,13 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
             optimizer = optim.Adam(model.parameters(), lr=args['lr'])
         elif algo == 'ADAGRAD':
             optimizer = optim.Adagrad(model.parameters(), lr=args['lr'])
-
+        if milestones and gamma:
+            scheduler = MultiStepLR(optimizer, milestones=milestones, gamma=gamma)
         train_losses, test_losses, train_accuracies, test_accuracies,\
         model_state_dict = train_loop_optimizer(model, trainloader, testloader,
                             optimizer, criterion, args['epochs'],
-                            log_interval=args['log_interval'], cuda=args['cuda'])
+                            log_interval=args['log_interval'], cuda=args['cuda'],
+                            scheduler=scheduler)
         
         return build_return_dict_optim(train_losses, test_losses,
                                        train_accuracies, test_accuracies, model_state_dict)
@@ -272,7 +279,8 @@ def train_loop(algo, model, trainloader, testloader, criterion, args):
             train_loop_SVRG(model, trainloader, testloader, args['lr'], 
                             freq = args['svrg_freq']*len(trainloader), 
                             criterion = criterion, epochs_to_run=args['epochs'],
-                            log_interval=args['log_interval'], cuda=args['cuda'])
+                            log_interval=args['log_interval'], cuda=args['cuda'],
+                            milestones=milestones, gamma=gamma)
             
         return build_return_dict_svrg(train_losses, test_losses, train_accuracies,
                                       test_accuracies, model_state_dict,

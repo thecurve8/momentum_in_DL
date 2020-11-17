@@ -59,7 +59,8 @@ def train_epoch_optimizer(model, trainloader, optimizer, criterion, cuda):
     loss_epoch = running_loss / len(trainloader.dataset)
     return loss_epoch, model, optimizer
 
-def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion, epochs_to_run, log_interval, cuda):
+def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion,
+                         epochs_to_run, log_interval, cuda, scheduler = None):
     """
     Training loop for a model with a given optimizer and criterion
 
@@ -107,7 +108,8 @@ def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion, e
     for epoch in range(epochs_to_run):
         train_loss_epoch, model, optimizer = train_epoch_optimizer(model, trainloader, optimizer, criterion, cuda)
         train_losses.append(train_loss_epoch)
-
+        if scheduler:
+            scheduler.step()
         with torch.no_grad():
             test_loss_epoch = test(model, testloader, criterion, cuda)
             test_losses.append(test_loss_epoch)
@@ -126,3 +128,4 @@ def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion, e
     model_state_dict = {k: v.cpu() for k, v in model.state_dict().items()}
 
     return train_losses, test_losses, train_accuracies, test_accuracies, model_state_dict
+

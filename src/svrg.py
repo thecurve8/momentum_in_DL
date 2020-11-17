@@ -78,7 +78,9 @@ def svrg_train_epoch(model, snapshot_model, trainloader, learning_rate, freq, cr
 
     return loss_epoch, model, snapshot_model, curr_batch_iter, mu
 
-def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq, criterion, epochs_to_run, log_interval, cuda):
+def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq,
+                    criterion, epochs_to_run, log_interval, cuda,
+                    milestones=None, gamma=None):
     train_losses = []
     test_losses = []
     train_accuracies = []
@@ -86,13 +88,19 @@ def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq, criteri
     curr_batch_iter = 0
     snapshot_model = copy.deepcopy(model)
     mu = None
+    used_learning_rate = learning_rate
+    
     for epoch in range(epochs_to_run):
+        if milestones and gamma:
+            if epoch in milestones:
+                used_learning_rate *= gamma
         train_loss_epoch, model, snapshot_model, curr_batch_iter, mu = \
-            svrg_train_epoch(model, snapshot_model, trainloader, learning_rate,
+            svrg_train_epoch(model, snapshot_model, trainloader, used_learning_rate,
                        freq, criterion, curr_batch_iter, mu, cuda)
             
         train_losses.append(train_loss_epoch)
-
+        
+        
         with torch.no_grad():
             test_loss_epoch = test(model, testloader, criterion, cuda)
             test_losses.append(test_loss_epoch)
