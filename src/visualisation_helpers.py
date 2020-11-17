@@ -180,8 +180,9 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, filename =
     ax.set_ylabel("Test loss")
     ax.set_yscale('log')
     ax.set_xlabel("Gradient updates")
-    plt.show()
     if filename:
         plt.savefig(filename)
+    plt.show()
+
     
     
