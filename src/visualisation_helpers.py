@@ -5,6 +5,7 @@ Created on Mon Oct 19 18:23:05 2020
 @author: Alexander
 """
 import matplotlib.pyplot as plt
+import numpy as np
 
 def plot_metrics(dict_after_training, title, kind='both', metric='loss', period_name = 'Epoch',
                  first_index=0, last_value=-1, log_yscale=False):
@@ -180,6 +181,31 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, filename =
     ax.set_ylabel("Test loss")
     ax.set_yscale('log')
     ax.set_xlabel("Gradient updates")
+    if filename:
+        plt.savefig(filename)
+    plt.show()
+    
+def plot_CV(return_dict, x_values, values, algo_name, filename=None):
+    val_losses = return_dict['validation_losses']
+    number_values = val_losses.shape[0]
+    if number_values != len(values):
+        raise ValueError("Given values don't match dict shape")
+    
+    number_folds = val_losses.shape[1]
+    fig, axs = plt.subplots(1, 1, figsize = (10, 10), sharey=True)
+    for i, val in enumerate(values):
+        mean_on_folds = np.mean(val_losses, axis=1)[i,:]
+        axs.plot(x_values, mean_on_folds, label="lr={}".format(values[i]))
+        axs.scatter(x_values[-1], mean_on_folds[-1])
+        
+        for f in range(number_folds):
+            axs.plot(x_values, val_losses[i, f, :], color=plt.gca().lines[-1].get_color(), alpha=0.2)
+        
+    axs.legend()
+    axs.set_title("{}-Fold Cross Validation for {}".format(number_folds, algo_name))
+    axs.set_ylabel("Validation loss")
+    axs.set_yscale('log')
+    axs.set_xlabel("Gradient updates")
     if filename:
         plt.savefig(filename)
     plt.show()
