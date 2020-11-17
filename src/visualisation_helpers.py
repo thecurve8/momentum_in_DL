@@ -157,7 +157,7 @@ def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
     axs[1,1].set_xlabel("Gradient updates")
     plt.show()
     
-def test_losses_annotated(list_return_dicts, list_x_axis, list_names, filename = None):
+def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name, filename = None):
     if len(list_return_dicts) != len(list_x_axis):
         raise ValueError("The number of return_dict and x_axis is not the same")
     if len(list_return_dicts) != len(list_names):
@@ -173,11 +173,11 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, filename =
         y_coord_annotation = test_loss[-1]*0.985
 
         ax.annotate("{:.2E}".format(test_loss[-1]),
-                    (list_x_axis[i][-1] + 4000, y_coord_annotation),
+                    (list_x_axis[i][-1]*1.01, y_coord_annotation),
                     color=plt.gca().lines[-1].get_color())
     ax.legend()
-    ax.set_xlim(0, 500000)
-    ax.set_title("Test Losses comparison")
+    ax.set_xlim(0, ax.get_xlim()[1]*1.1)
+    ax.set_title("Test Losses comparison on {}".format(model_name))
     ax.set_ylabel("Test loss")
     ax.set_yscale('log')
     ax.set_xlabel("Gradient updates")
