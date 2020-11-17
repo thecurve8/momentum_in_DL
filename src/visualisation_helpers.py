@@ -119,85 +119,6 @@ def plot_together(title, labels, styles, metric_dicts, metric = 'loss', kind='bo
         plt.yscale('log')    
     plt.legend()
     plt.show()
-    
-def compare_all(adam_return_dict, sgd_return_dict,svrg_return_dict, storm_return_dict):
-    """
-    Compare all metrics between ADAM, SGD, SVRG and STORM after training
-
-    Parameters
-    ----------
-    adam_return_dict : dict
-        Dictionary returned after training.
-    sgd_return_dict : dict
-        Dictionary returned after training.
-    svrg_return_dict : dict
-        Dictionary returned after training.
-    storm_return_dict : dict
-        Dictionary returned after training.
-
-    Returns
-    -------
-    None.
-
-    """
-    fig, axs = plt.subplots(2,2,sharex=True, figsize=(12,12))
-    adam_tr_acc = adam_return_dict['train_accuracies']
-    sgd_tr_acc = sgd_return_dict['train_accuracies']
-    svrg_tr_acc = svrg_return_dict['train_accuracies']
-    storm_tr_acc = storm_return_dict['train_accuracies']
-
-    adam_test_acc = adam_return_dict['test_accuracies']
-    sgd_test_acc = sgd_return_dict['test_accuracies']
-    svrg_test_acc = svrg_return_dict['test_accuracies']
-    storm_test_acc = storm_return_dict['test_accuracies']
-
-    adam_tr_loss = adam_return_dict['train_losses']
-    sgd_tr_loss = sgd_return_dict['train_losses']
-    svrg_tr_loss = svrg_return_dict['train_losses']
-    storm_tr_loss = storm_return_dict['train_losses']
-
-    adam_test_loss = adam_return_dict['test_losses']
-    sgd_test_loss = sgd_return_dict['test_losses']
-    svrg_test_loss = svrg_return_dict['test_losses']
-    storm_test_loss = storm_return_dict['test_losses']
-
-    axs[0,0].plot(adam_test_loss, label="Adam")
-    axs[0,0].plot(sgd_test_loss, label="SGD")
-    axs[0,0].plot(svrg_test_loss, label="SVRG")
-    axs[0,0].plot(storm_test_loss, label="STORM")
-
-    axs[0,1].plot(adam_tr_loss, label="Adam")
-    axs[0,1].plot(sgd_tr_loss, label="SGD")
-    axs[0,1].plot(svrg_tr_loss, label="SVRG")
-    axs[0,1].plot(storm_tr_loss, label="STORM")
-
-    axs[1,0].plot(adam_test_acc, label="Adam")
-    axs[1,0].plot(sgd_test_acc, label="SGD")
-    axs[1,0].plot(svrg_test_acc, label="SVRG")
-    axs[1,0].plot(storm_test_acc, label="STORM")
-
-    axs[1,1].plot(adam_tr_acc, label="Adam")
-    axs[1,1].plot(sgd_tr_acc, label="SGD")
-    axs[1,1].plot(svrg_tr_acc, label="SVRG")
-    axs[1,1].plot(storm_tr_acc, label="STORM")
-
-    axs[0,0].legend()
-    axs[0,0].set_title("Test Losses comparison")
-    axs[0,0].set_ylabel("Test loss")
-    axs[0,0].set_yscale('log')
-    axs[0,1].legend()
-    axs[0,1].set_title("Training Losses comparison")
-    axs[0,1].set_ylabel("Training loss")
-    axs[0,1].set_yscale('log')
-    axs[1,0].legend()
-    axs[1,0].set_title("Test Accuracy comparsion")
-    axs[1,0].set_ylabel("Test accuracy")
-    axs[1,0].set_xlabel("Epochs")
-    axs[1,1].legend()
-    axs[1,1].set_title("Training Losses comparison")
-    axs[1,1].set_ylabel("Training accuracy")
-    axs[1,1].set_xlabel("Epochs")
-    plt.show()
 
     
 def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
@@ -235,168 +156,32 @@ def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
     axs[1,1].set_xlabel("Gradient updates")
     plt.show()
     
-def compare_all_with_gradient_updates(adam_return_dict, sgd_return_dict,svrg_return_dict, storm_return_dict,
-                                      adam_x, sgd_x, svrg_x, storm_x):
-    """
-    Compare all metrics between ADAM, SGD, SVRG and STORM after training
-
-    Parameters
-    ----------
-    adam_return_dict : dict
-        Dictionary returned after training.
-    sgd_return_dict : dict
-        Dictionary returned after training.
-    svrg_return_dict : dict
-        Dictionary returned after training.
-    storm_return_dict : dict
-        Dictionary returned after training.
-    adam_x : list 
-        x axis coordinates for adam points
-    sgd_x : list 
-        x axis coordinates for sgd points
-    svrg_x : list 
-        x axis coordinates for svrg points
-    storm_x : list 
-        x axis coordinates for storm points
+def test_losses_annotated(list_return_dicts, list_x_axis, list_names, filename = None):
+    if len(list_return_dicts) != len(list_x_axis):
+        raise ValueError("The number of return_dict and x_axis is not the same")
+    if len(list_return_dicts) != len(list_names):
+        raise ValueError("The number of return_dict and names is not the same")
         
+    fig, ax = plt.subplots(1, figsize=(10,10))
+    for i, return_dict in enumerate(list_return_dicts):
 
-    Returns
-    -------
-    None.
+        test_loss = return_dict['test_losses']
+        ax.plot(list_x_axis[i], test_loss, label=list_names[i])
+        ax.scatter(list_x_axis[i][-1], test_loss[-1])
 
-    """
-    fig, axs = plt.subplots(2,2,sharex=True, figsize=(12,12))
-    adam_tr_acc = adam_return_dict['train_accuracies']
-    sgd_tr_acc = sgd_return_dict['train_accuracies']
-    svrg_tr_acc = svrg_return_dict['train_accuracies']
-    storm_tr_acc = storm_return_dict['train_accuracies']
+        y_coord_annotation = test_loss[-1]*0.985
 
-    adam_test_acc = adam_return_dict['test_accuracies']
-    sgd_test_acc = sgd_return_dict['test_accuracies']
-    svrg_test_acc = svrg_return_dict['test_accuracies']
-    storm_test_acc = storm_return_dict['test_accuracies']
-
-    adam_tr_loss = adam_return_dict['train_losses']
-    sgd_tr_loss = sgd_return_dict['train_losses']
-    svrg_tr_loss = svrg_return_dict['train_losses']
-    storm_tr_loss = storm_return_dict['train_losses']
-
-    adam_test_loss = adam_return_dict['test_losses']
-    sgd_test_loss = sgd_return_dict['test_losses']
-    svrg_test_loss = svrg_return_dict['test_losses']
-    storm_test_loss = storm_return_dict['test_losses']
-
-    axs[0,0].plot(adam_x, adam_test_loss, label="Adam")
-    axs[0,0].plot(sgd_x, sgd_test_loss, label="SGD")
-    axs[0,0].plot(svrg_x, svrg_test_loss, label="SVRG")
-    axs[0,0].plot(storm_x, storm_test_loss, label="STORM")
-
-    axs[0,1].plot(adam_x, adam_tr_loss, label="Adam")
-    axs[0,1].plot(sgd_x, sgd_tr_loss, label="SGD")
-    axs[0,1].plot(svrg_x, svrg_tr_loss, label="SVRG")
-    axs[0,1].plot(storm_x, storm_tr_loss, label="STORM")
-
-    axs[1,0].plot(adam_x, adam_test_acc, label="Adam")
-    axs[1,0].plot(sgd_x, sgd_test_acc, label="SGD")
-    axs[1,0].plot(svrg_x, svrg_test_acc, label="SVRG")
-    axs[1,0].plot(storm_x, storm_test_acc, label="STORM")
-
-    axs[1,1].plot(adam_x, adam_tr_acc, label="Adam")
-    axs[1,1].plot(sgd_x, sgd_tr_acc, label="SGD")
-    axs[1,1].plot(svrg_x, svrg_tr_acc, label="SVRG")
-    axs[1,1].plot(storm_x, storm_tr_acc, label="STORM")
-
-    axs[0,0].legend()
-    axs[0,0].set_title("Test Losses comparison")
-    axs[0,0].set_ylabel("Test loss")
-    axs[0,0].set_yscale('log')
-    axs[0,1].legend()
-    axs[0,1].set_title("Training Losses comparison")
-    axs[0,1].set_ylabel("Training loss")
-    axs[0,1].set_yscale('log')
-    axs[1,0].legend()
-    axs[1,0].set_title("Test Accuracy comparsion")
-    axs[1,0].set_ylabel("Test accuracy")
-    axs[1,0].set_xlabel("Gradient updates")
-    axs[1,1].legend()
-    axs[1,1].set_title("Training Losses comparison")
-    axs[1,1].set_ylabel("Training accuracy")
-    axs[1,1].set_xlabel("Gradient updates")
+        ax.annotate("{:.2E}".format(test_loss[-1]),
+                    (list_x_axis[i][-1] + 4000, y_coord_annotation),
+                    color=plt.gca().lines[-1].get_color())
+    ax.legend()
+    ax.set_xlim(0, 500000)
+    ax.set_title("Test Losses comparison")
+    ax.set_ylabel("Test loss")
+    ax.set_yscale('log')
+    ax.set_xlabel("Gradient updates")
     plt.show()
+    if filename:
+        plt.savefig(filename)
     
-def compare_all_with_gradient_updates_without_storm(adam_return_dict, sgd_return_dict,svrg_return_dict,
-                                      adam_x, sgd_x, svrg_x):
-    """
-    Compare all metrics between ADAM, SGD, SVRG after training
-
-    Parameters
-    ----------
-    adam_return_dict : dict
-        Dictionary returned after training.
-    sgd_return_dict : dict
-        Dictionary returned after training.
-    svrg_return_dict : dict
-        Dictionary returned after training.
-    adam_x : list 
-        x axis coordinates for adam points
-    sgd_x : list 
-        x axis coordinates for sgd points
-    svrg_x : list 
-        x axis coordinates for svrg points
-        
-
-    Returns
-    -------
-    None.
-
-    """
-    fig, axs = plt.subplots(2,2,sharex=True, figsize=(12,12))
-    adam_tr_acc = adam_return_dict['train_accuracies']
-    sgd_tr_acc = sgd_return_dict['train_accuracies']
-    svrg_tr_acc = svrg_return_dict['train_accuracies']
-
-    adam_test_acc = adam_return_dict['test_accuracies']
-    sgd_test_acc = sgd_return_dict['test_accuracies']
-    svrg_test_acc = svrg_return_dict['test_accuracies']
-
-    adam_tr_loss = adam_return_dict['train_losses']
-    sgd_tr_loss = sgd_return_dict['train_losses']
-    svrg_tr_loss = svrg_return_dict['train_losses']
-
-    adam_test_loss = adam_return_dict['test_losses']
-    sgd_test_loss = sgd_return_dict['test_losses']
-    svrg_test_loss = svrg_return_dict['test_losses']
-
-    axs[0,0].plot(adam_x, adam_test_loss, label="Adam")
-    axs[0,0].plot(sgd_x, sgd_test_loss, label="SGD")
-    axs[0,0].plot(svrg_x, svrg_test_loss, label="SVRG")
-
-    axs[0,1].plot(adam_x, adam_tr_loss, label="Adam")
-    axs[0,1].plot(sgd_x, sgd_tr_loss, label="SGD")
-    axs[0,1].plot(svrg_x, svrg_tr_loss, label="SVRG")
-
-    axs[1,0].plot(adam_x, adam_test_acc, label="Adam")
-    axs[1,0].plot(sgd_x, sgd_test_acc, label="SGD")
-    axs[1,0].plot(svrg_x, svrg_test_acc, label="SVRG")
-
-    axs[1,1].plot(adam_x, adam_tr_acc, label="Adam")
-    axs[1,1].plot(sgd_x, sgd_tr_acc, label="SGD")
-    axs[1,1].plot(svrg_x, svrg_tr_acc, label="SVRG")
-
-    axs[0,0].legend()
-    axs[0,0].set_title("Test Losses comparison")
-    axs[0,0].set_ylabel("Test loss")
-    axs[0,0].set_yscale('log')
-    axs[0,1].legend()
-    axs[0,1].set_title("Training Losses comparison")
-    axs[0,1].set_ylabel("Training loss")
-    axs[0,1].set_yscale('log')
-    axs[1,0].legend()
-    axs[1,0].set_title("Test Accuracy comparsion")
-    axs[1,0].set_ylabel("Test accuracy")
-    axs[1,0].set_xlabel("Gradient updates")
-    axs[1,1].legend()
-    axs[1,1].set_title("Training Losses comparison")
-    axs[1,1].set_ylabel("Training accuracy")
-    axs[1,1].set_xlabel("Gradient updates")
-    plt.show()
+    
