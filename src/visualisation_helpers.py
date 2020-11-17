@@ -198,6 +198,42 @@ def compare_all(adam_return_dict, sgd_return_dict,svrg_return_dict, storm_return
     axs[1,1].set_ylabel("Training accuracy")
     axs[1,1].set_xlabel("Epochs")
     plt.show()
+
+    
+def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
+    if len(list_return_dicts) != len(list_x_axis):
+        raise ValueError("The number of return_dict and x_axis is not the same")
+    if len(list_return_dicts) != len(list_names):
+        raise ValueError("The number of return_dict and names is not the same")
+        
+    fig, axs = plt.subplots(2,2,sharex=True, figsize=(12,12))
+    for i, return_dict in enumerate(list_return_dicts):
+        tr_acc = return_dict['train_accuracies']
+        test_acc = return_dict['test_accuracies']
+        tr_loss = return_dict['train_losses']
+        test_loss = return_dict['test_losses']
+        axs[0,0].plot(list_x_axis[i], test_loss, label=list_names[i])
+        axs[0,1].plot(list_x_axis[i], tr_loss, label=list_names[i])
+        axs[1,0].plot(list_x_axis[i], test_acc, label=list_names[i])
+        axs[1,1].plot(list_x_axis[i], tr_acc, label=list_names[i])
+    
+    axs[0,0].legend()
+    axs[0,0].set_title("Test Losses comparison")
+    axs[0,0].set_ylabel("Test loss")
+    axs[0,0].set_yscale('log')
+    axs[0,1].legend()
+    axs[0,1].set_title("Training Losses comparison")
+    axs[0,1].set_ylabel("Training loss")
+    axs[0,1].set_yscale('log')
+    axs[1,0].legend()
+    axs[1,0].set_title("Test Accuracy comparsion")
+    axs[1,0].set_ylabel("Test accuracy")
+    axs[1,0].set_xlabel("Gradient updates")
+    axs[1,1].legend()
+    axs[1,1].set_title("Training Losses comparison")
+    axs[1,1].set_ylabel("Training accuracy")
+    axs[1,1].set_xlabel("Gradient updates")
+    plt.show()
     
 def compare_all_with_gradient_updates(adam_return_dict, sgd_return_dict,svrg_return_dict, storm_return_dict,
                                       adam_x, sgd_x, svrg_x, storm_x):
