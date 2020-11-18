@@ -12,7 +12,7 @@
 
 \title{Variance reduced methods in Deep Neural Networks}
 \author{Alexander Apostolov}
-\institute {Ecole Polytechnique Fédérale de Lausanne}
+\institute {École Polytechnique Fédérale de Lausanne}
 \date{November 11th 2020}
 
 \begin{document}
@@ -138,6 +138,26 @@ Analyze the effect of \alert{variance reduction methods} in \alert{deep neural n
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Baseline comparison}
+    We first performed a baseline comparison on MNIST on LeNet for the following algorithms:
+    \begin{itemize}
+        \item Adam
+        \item SGD
+        \item AdaGrad
+        \item SVRG
+        \item STORM
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Setup CV}
+    \begin{figure}
+        \centering
+    \includegraphics[scale=0.4]{midterm presentation/images/LeNet.png}
+        \label{fig:lenet}
+        \caption{LeNet network used for MNIST}
+    \end{figure} 
+\end{frame}
+
 \begin{frame}{Cross-validation for Hyperparameter selection}
     We performed 4-Fold cross-validation on MNIST with LeNet:
     \begin{itemize}
@@ -155,7 +175,7 @@ Analyze the effect of \alert{variance reduction methods} in \alert{deep neural n
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Cross-validation for Adam}
+\begin{frame}{Cross-validation example : Adam}
     \begin{figure}
         \centering
     \includegraphics[scale=0.35]{midterm presentation/images/adamCV.png}
@@ -163,39 +183,54 @@ Analyze the effect of \alert{variance reduction methods} in \alert{deep neural n
     \end{figure}   
 \end{frame}
 
-\begin{frame}{Algorithm comparison on MNIST}
+\begin{frame}{Results on small Neural Network (LeNet)}
     \begin{figure}
         \centering
     \includegraphics[scale=0.35]{midterm presentation/images/testLossesMnist.png}
         \label{fig:testLossesMnist}
     \end{figure}   
 \end{frame}
-####explain CV setup
 
-####Show results
+\begin{frame}{Results on small Neural Network (LeNet)}
 
-###Paper about ineffectiveness
+    We see that in this setup, \textbf{both variance reduced methods are performing better}.
+    \newline
+    It takes more time for SVRG and STORM to have better results. This is due in part to the two gradients that have to be computed per iteration and $\tilde{\mu}$ (the full gradient) that has to be computed every 5 iterations in SVRG.
 
-###setup to test this
-
-####replace Batch-norm by Init
-
-\begin{frame}{Setup CV}
-    \begin{figure}
-        \centering
-    \includegraphics[scale=0.4]{midterm presentation/images/LeNet.png}
-        \label{fig:lenet}
-        \caption{LeNet network used for MNIST}
-    \end{figure} 
-    
 \end{frame}
 
-\begin{frame}{Algorithm comparison on CIFAR10}
+\begin{frame}{Variance reduced methods on deep neural networks}
+    We want to test if variance reduced methods are still performing better on deep neural networks.
+    \newline
+    The paper "On the Ineffectiveness of Variance Reduced
+    Optimization for Deep Learning" by A. Defazio \& L. Bottou suggests that this is not the case, but:
+    \begin{itemize}
+        \item They just give empirical evidence for specific setups, \textbf{no proofs} that it actually doesn't work.
+        \item They \textbf{use Batch-Norm Layers} in their setup. Batch-Norm layers break the assumption that the updates in SVRG are unbiased in expectation.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Our hypothesis}
+    We want to check whether \textbf{removing Batch-Norm layers} and using other methods such as MetaInit can \textbf{help SVRG outperform} other algorithms as in the case of the setup with LeNet.
+\end{frame}
+
+
+\begin{frame}{Preliminary algorithm comparison on CIFAR10 with ResNet18}
+    To test this hypothesis, we first use ResNet18 on the CIFAR10 dataset to see that in this setup (with BatchNorm layers) SVRG is outperformed.
     \begin{figure}
         \centering
-    \includegraphics[scale=0.35]{midterm presentation/images/testLossesMnist.png}
-        \label{fig:testLossesMnist}
+    \includegraphics[scale=0.32]{midterm presentation/images/resnet18cifar.png}
+        \label{fig:testLossesCifar}
     \end{figure}   
+\end{frame}
+
+\begin{frame}{Further steps}
+    Plans for the rest of the project:
+    \begin{itemize}
+        \item Remove BatchNorm layers
+        \item Use MetaInit to replace the missing BatchNorm layer
+        \item Apply the findings to a deeper network (ResNet50 ?)
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{ }
