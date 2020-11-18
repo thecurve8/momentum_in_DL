@@ -262,6 +262,7 @@ def train_loop(algo, model, trainloader, testloader, criterion, args, milestones
             optimizer = optim.Adam(model.parameters(), lr=args['lr'])
         elif algo == 'ADAGRAD':
             optimizer = optim.Adagrad(model.parameters(), lr=args['lr'])
+        scheduler = None
         if milestones and gamma:
             scheduler = MultiStepLR(optimizer, milestones=milestones, gamma=gamma)
         train_losses, test_losses, train_accuracies, test_accuracies,\

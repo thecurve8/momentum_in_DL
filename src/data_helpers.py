@@ -117,7 +117,8 @@ def check_name(algo, model_name, criterion_name, args, dir_algo, specified_file_
             return True, beginning_name + str(file_number-1)+".pkl"
     else:
         name = beginning_name + str(specified_file_number)+".pkl"
-        return os.path.isfile(name), name
+        full_path = os.path.join(dir_algo, name)
+        return os.path.isfile(full_path), name
     
 def save_metrics(return_dict, algo, model_name, criterion_name, args):
     
