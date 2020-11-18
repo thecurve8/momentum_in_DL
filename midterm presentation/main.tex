@@ -138,6 +138,31 @@ Analyze the effect of \alert{variance reduction methods} in \alert{deep neural n
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Cross-validation for Hyperparameter selection}
+    We performed 4-Fold cross-validation on MNIST with LeNet:
+    \begin{itemize}
+        \item \textbf{Adam} : gridsearch for $\eta \in \{10^{-5}, 10^{-4}, 10^{-3}, 0.01, 0.1\}$ \newline
+        Best value : $\eta = 10^{-4}$
+        \item \textbf{SGD} : gridsearch for $\eta \in \{10^{-5}, 10^{-4}, 10^{-3}, 0.01, 0.1\}$ \newline
+        Best value : $\eta = 0.1$
+        \item \textbf{AdaGrad} : gridsearch for $\eta \in \{10^{-4}, 10^{-3}, 0.01, 0.1\}$ \newline
+        Best value : $\eta = 0.1$
+        \item \textbf{SVRG} : gridsearch for $\eta \in \{10^{-5}, 10^{-4}, 10^{-3}, 0.01, 0.1\}$ \newline
+        Best value : $\eta = 0.01$
+        \item \textbf{STORM} : gridsearch for $c \in \{10^{-5}, 10^{-4}, 10^{-3}, 0.01, 0.1\}$ and $k \in \{10^{-3}, 0.01, 0.1, 1\}$\newline
+        Best value : $c = 100$ and $k=0.1$
+        
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Cross-validation for Adam}
+    \begin{figure}
+        \centering
+    \includegraphics[scale=0.35]{midterm presentation/images/adamCV.png}
+        \label{fig:adamCV}
+    \end{figure}   
+\end{frame}
+
 \begin{frame}{Algorithm comparison on MNIST}
     \begin{figure}
         \centering
@@ -165,3 +190,4 @@ Analyze the effect of \alert{variance reduction methods} in \alert{deep neural n
 \end{frame}
 
 \end{document}
+
