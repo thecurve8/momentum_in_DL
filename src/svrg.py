@@ -18,8 +18,9 @@ def calculate_mu(model_snapchot, dataloader, criterion, cuda):
         criterion(model_snapchot(data), target).backward()
     mu = []
     for param in model_snapchot.parameters():
-        param.grad.data.div_(len(dataloader))
-        mu.append(param.grad.data.clone())
+        if param.grad != None:
+            param.grad.data.div_(len(dataloader))
+            mu.append(param.grad.data.clone())
     print("New mu calculated")
     return mu
 
