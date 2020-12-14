@@ -163,9 +163,11 @@ class BasicBlock(nn.Module):
         self.use_batchnorm = use_batchnorm
         
         self.conv1 = conv3x3(in_planes, planes, stride)
-        self.bn1 = nn.BatchNorm2d(planes)
+        if self.use_batchnorm:
+            self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = conv3x3(planes, planes)
-        self.bn2 = nn.BatchNorm2d(planes)
+        if self.use_batchnorm:
+            self.bn2 = nn.BatchNorm2d(planes)
 
         self.shortcut = nn.Sequential()
         if stride != 1 or in_planes != self.expansion*planes:
