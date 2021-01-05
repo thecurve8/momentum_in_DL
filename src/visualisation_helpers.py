@@ -157,7 +157,7 @@ def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
     axs[1,1].set_xlabel("Gradient updates")
     plt.show()
     
-def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name, filename = None):
+def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name, filename = None, ploted_loss="Test"):
     if len(list_return_dicts) != len(list_x_axis):
         raise ValueError("The number of return_dict and x_axis is not the same")
     if len(list_return_dicts) != len(list_names):
@@ -178,9 +178,9 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name
     ax.legend()
     ax.set_xlim(0, ax.get_xlim()[1]*1.1)
     ax.set_title("Test Losses comparison on {}".format(model_name))
-    ax.set_ylabel("Test loss")
+    ax.set_ylabel("{} loss".format(ploted_loss))
     ax.set_yscale('log')
-    ax.set_xlabel("Gradient updates")
+    ax.set_xlabel("Gradient computations")
     if filename:
         plt.savefig(filename)
     plt.show()
@@ -205,7 +205,7 @@ def plot_CV(return_dict, x_values, values, algo_name, filename=None):
     axs.set_title("{}-Fold Cross Validation for {}".format(number_folds, algo_name))
     axs.set_ylabel("Validation loss")
     axs.set_yscale('log')
-    axs.set_xlabel("Gradient updates")
+    axs.set_xlabel("Gradient computations")
     if filename:
         plt.savefig(filename)
     plt.show()
