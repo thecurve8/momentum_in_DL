@@ -177,7 +177,7 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name
                     color=plt.gca().lines[-1].get_color())
     ax.legend()
     ax.set_xlim(0, ax.get_xlim()[1]*1.1)
-    ax.set_title("Test Losses comparison on {}".format(model_name))
+    ax.set_title("{} Losses comparison on {}".format(ploted_loss, model_name))
     ax.set_ylabel("{} loss".format(ploted_loss))
     ax.set_yscale('log')
     ax.set_xlabel("Gradient computations")
