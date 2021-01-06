@@ -120,7 +120,7 @@ def check_name(algo, model_name, criterion_name, args, dir_algo, specified_file_
         full_path = os.path.join(dir_algo, name)
         return os.path.isfile(full_path), name
     
-def save_metrics(return_dict, algo, model_name, criterion_name, args):
+def save_metrics(return_dict, algo, model_name, criterion_name, args, dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'):
     
     available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM')
     if not isinstance(algo, str):
@@ -129,7 +129,6 @@ def save_metrics(return_dict, algo, model_name, criterion_name, args):
         raise ValueError("Expected algo value in "+ str(available_algo_names) +
                          " got {}".format(algo))
 
-    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
     dir_algo = os.path.join(dir_name, algo)
     
     file_name = create_name(algo, model_name, criterion_name, args, dir_algo)
@@ -138,7 +137,7 @@ def save_metrics(return_dict, algo, model_name, criterion_name, args):
     with open(full_path, 'wb') as file:
         pickle.dump(return_dict, file)
 
-def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_value):
+def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_value, dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'):
     available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM', 'ADAGRAD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
@@ -146,7 +145,7 @@ def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_
         raise ValueError("Expected algo value in "+ str(available_algo_names) +
                          " got {}".format(algo))
 
-    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
+    
     dir_algo = os.path.join(dir_name, algo)
     
     file_name = create_name_cv(algo, model_name, criterion_name, args, dir_algo, from_value, to_value)
@@ -155,7 +154,7 @@ def save_cv(return_dict, algo, model_name, criterion_name, args, from_value, to_
     with open(full_path, 'wb') as file:
         pickle.dump(return_dict, file)
 
-def load_metrics_dict(algo, model_name, criterion_name, args, specified_file_number=-1):
+def load_metrics_dict(algo, model_name, criterion_name, args, specified_file_number=-1, dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'):
     available_algo_names = ('SVRG', 'ADAM', 'SGD', 'STORM', 'ADAGRAD')
     if not isinstance(algo, str):
         raise TypeError("Expected str for algo. Got {}".format(type(algo)))
@@ -163,7 +162,7 @@ def load_metrics_dict(algo, model_name, criterion_name, args, specified_file_num
         raise ValueError("Expected algo value in "+ str(available_algo_names) +
                          " got {}".format(algo))
     
-    dir_name = '/content/drive/My Drive/Semester_Project_MLO/saved/'
+    
     dir_algo = os.path.join(dir_name, algo)
     
     exists, file_name = check_name(algo, model_name, criterion_name, args, dir_algo,
