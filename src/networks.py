@@ -268,13 +268,13 @@ def ResNet34(num_classes=10, use_batchnorm=True):
     return ResNet(BasicBlock, [3,4,6,3], num_classes, use_batchnorm)
 
 def ResNet50(num_classes=10, use_batchnorm=True):
-    return ResNet(Bottleneck, [3,4,6,3], num_classes, use_batchnorm)
+    return ResNet(BasicBlock, [3,4,6,3], num_classes, use_batchnorm)
 
 def ResNet101(num_classes=10, use_batchnorm=True):
-    return ResNet(Bottleneck, [3,4,23,3], num_classes, use_batchnorm)
+    return ResNet(BasicBlock, [3,4,23,3], num_classes, use_batchnorm)
 
 def ResNet152(num_classes=10, use_batchnorm=True):
-    return ResNet(Bottleneck, [3,8,36,3], num_classes, use_batchnorm)
+    return ResNet(BasicBlock, [3,8,36,3], num_classes, use_batchnorm)
 
 # def test_resnet():
 #     net = ResNet50()
