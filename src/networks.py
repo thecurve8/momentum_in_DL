@@ -3,6 +3,9 @@
 Created on Mon Oct 19 16:12:46 2020
 
 @author: Alexander
+
+
+This file contains the different networks used in the experiments.
 """
 import torch
 import torch.nn as nn
@@ -14,12 +17,7 @@ class LeNet(nn.Module):
     A class used to model a LeNet-5 network
     http://yann.lecun.com/exdb/lenet/ and 
     https://towardsdatascience.com/convolutional-neural-network-champions-part-1-lenet-5-7a8d6eb98df6
-    
-    
-    Methods
-    -------
-    forward(x)
-        returns log_softmax output of the network with input x
+
     """
     
     def __init__(self):
@@ -149,7 +147,7 @@ class LeNet_layer_norm(nn.Module):
 ###############################################################################
 #########---------------------RESNET-----------------------------------########
 ###############################################################################
-### code comes from : https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
+### code adapted from : https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 
 def conv3x3(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -262,23 +260,96 @@ class ResNet(nn.Module):
 
 
 def ResNet18(num_classes=10, use_batchnorm=True):
+    """
+    Return ResNet18 model.
+
+    Parameters
+    ----------
+    num_classes : int, optional
+        Number of prediction classes. The default is 10.
+    use_batchnorm : TYPE, optional
+        Whether to use batchnorm layers in the model. The default is True.
+
+    Returns
+    -------
+    torch.nn.Module
+        ResNet18 model.
+
+    """
     return ResNet(BasicBlock, [2,2,2,2], num_classes, use_batchnorm)
 
 def ResNet34(num_classes=10, use_batchnorm=True):
+    """
+    Return ResNet34 model.
+
+    Parameters
+    ----------
+    num_classes : int, optional
+        Number of prediction classes. The default is 10.
+    use_batchnorm : TYPE, optional
+        Whether to use batchnorm layers in the model. The default is True.
+
+    Returns
+    -------
+    torch.nn.Module
+        ResNet34 model.
+
+    """
     return ResNet(BasicBlock, [3,4,6,3], num_classes, use_batchnorm)
 
 def ResNet50(num_classes=10, use_batchnorm=True):
+    """
+    Return ResNet50 model.
+
+    Parameters
+    ----------
+    num_classes : int, optional
+        Number of prediction classes. The default is 10.
+    use_batchnorm : TYPE, optional
+        Whether to use batchnorm layers in the model. The default is True.
+
+    Returns
+    -------
+    torch.nn.Module
+        ResNet50 model.
+
+    """
     return ResNet(BasicBlock, [3,4,6,3], num_classes, use_batchnorm)
 
 def ResNet101(num_classes=10, use_batchnorm=True):
+    """
+    Return ResNet101 model.
+
+    Parameters
+    ----------
+    num_classes : int, optional
+        Number of prediction classes. The default is 10.
+    use_batchnorm : TYPE, optional
+        Whether to use batchnorm layers in the model. The default is True.
+
+    Returns
+    -------
+    torch.nn.Module
+        ResNet101 model.
+
+    """
     return ResNet(BasicBlock, [3,4,23,3], num_classes, use_batchnorm)
 
 def ResNet152(num_classes=10, use_batchnorm=True):
+    """
+    Return ResNet152 model.
+
+    Parameters
+    ----------
+    num_classes : int, optional
+        Number of prediction classes. The default is 10.
+    use_batchnorm : TYPE, optional
+        Whether to use batchnorm layers in the model. The default is True.
+
+    Returns
+    -------
+    torch.nn.Module
+        ResNet152 model.
+
+    """
     return ResNet(BasicBlock, [3,8,36,3], num_classes, use_batchnorm)
-
-# def test_resnet():
-#     net = ResNet50()
-#     y = net(Variable(torch.randn(1,3,32,32)))
-#     print(y.size())
-
-# test_resnet()

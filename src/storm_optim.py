@@ -53,7 +53,6 @@ class STORM(torch.optim.Optimizer):
                     assert self.step_num == 0
                     # State initialization
                     state['step'] = 0
-                    # TODO check if below doesn't need to be initialized at 0
                     state['sum_Gt_sq'] =torch.sum(gt*gt)
                     state['recorded_gt'] = torch.zeros_like(p.data)
                     state['dt'] = gt.clone()
@@ -80,6 +79,50 @@ class STORM(torch.optim.Optimizer):
 def train_loop_storm_optim(model, trainloader, testloader, k, w, c, criterion,
                      epochs_to_run, log_interval, cuda,
                      milestones = None, gamma = None):
+    """
+    
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        model to train.
+    trainloader : torch.utils.data.DataLoader
+        Trainloader object..
+    testloader : torch.utils.data.DataLoader
+        Testloader object..
+    k : float
+        learning rate scaling (called k in the original paper)..
+    w : float
+        STORM parameter.
+    c : float
+        initial value of denominator in adaptive learning rate.
+    criterion : torch.nn._Loss
+        Loss function.
+    epochs_to_run : int
+        Epochs for training.
+    log_interval : int
+        number of epochs between logs..
+    cuda : bool
+        cuda available.
+    milestones : list of int, optional
+        If set the epochs at which to reschedule the learning rate. The default is None.
+    gamma : list of int, optional
+        If set, the amout to rescale the learing rate. The default is None.
+
+    Returns
+    -------
+    train_losses : TYPE
+        DESCRIPTION.
+    test_losses : TYPE
+        DESCRIPTION.
+    train_accuracies : TYPE
+        DESCRIPTION.
+    test_accuracies : TYPE
+        DESCRIPTION.
+    model_state_dict : TYPE
+        DESCRIPTION.
+
+    """
     
     optmz = STORM(model.parameters(), c, k, w)
     train_losses = []

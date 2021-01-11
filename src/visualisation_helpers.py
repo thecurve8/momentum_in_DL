@@ -33,6 +33,7 @@ def plot_metrics(dict_after_training, title, kind='both', metric='loss', period_
     
     
     """
+    
     if metric == 'loss':
         key = "_losses"
         plt.ylabel("Loss")
@@ -123,6 +124,28 @@ def plot_together(title, labels, styles, metric_dicts, metric = 'loss', kind='bo
 
     
 def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
+    """
+    Compares all metrics of given return dicts of different experiments.
+
+    Parameters
+    ----------
+    list_return_dicts : list of dict
+        list of return_dict of the different experiments.
+    list_x_axis : list of list
+        List of x_axis for each experiment.
+    list_names : list of str
+        List of labels.
+
+    Raises
+    ------
+    ValueError
+        If the given axis doesn't math the list of metrics of the corresponding dictionary..
+
+    Returns
+    -------
+    None.
+
+    """
     if len(list_return_dicts) != len(list_x_axis):
         raise ValueError("The number of return_dict and x_axis is not the same")
     if len(list_return_dicts) != len(list_names):
@@ -158,6 +181,34 @@ def compare_return_dicts(list_return_dicts, list_x_axis, list_names):
     plt.show()
     
 def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name, filename = None, ploted_loss="Test"):
+    """
+    Plots comparison of test/validation losses between experiments.
+
+    Parameters
+    ----------
+    list_return_dicts : list of dict
+        list of return_dict of the different experiments.
+    list_x_axis : list of list
+        List of x_axis for each experiment.
+    list_names : list of str
+        List of labels.
+    model_name : str
+        Name of the used model, will be used in the title.
+    filename : str, optional
+        If specified saves the fig in this file. The default is None.
+    ploted_loss : str, optional
+        Name of the plotted loss, usually Test or Train. The default is "Test".
+
+    Raises
+    ------
+    ValueError
+        If the given axis doesn't math the list of metrics of the corresponding dictionary.
+
+    Returns
+    -------
+    None.
+
+    """
     if len(list_return_dicts) != len(list_x_axis):
         raise ValueError("The number of return_dict and x_axis is not the same")
     if len(list_return_dicts) != len(list_names):
@@ -186,6 +237,32 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name
     plt.show()
     
 def plot_CV(return_dict, x_values, values, algo_name, filename=None):
+    """
+    Compares the results of cross-validation for different runs on a model.
+
+    Parameters
+    ----------
+    list_return_dicts : list of dict
+        list of return_dict of the different experiments.
+    list_x_axis : list of list
+        List of x_axis for each experiment.
+    list_names : list of str
+        List of labels.
+    model_name : str
+        Name of the used model, will be used in the title.
+    filename : str, optional
+        If specified saves the fig in this file. The default is None.
+
+    Raises
+    ------
+    ValueError
+        If the given axis doesn't math the list of metrics of the corresponding dictionary..
+
+    Returns
+    -------
+    None.
+
+    """
     val_losses = return_dict['validation_losses']
     number_values = val_losses.shape[0]
     if number_values != len(values):

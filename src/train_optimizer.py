@@ -82,6 +82,8 @@ def train_loop_optimizer(model, trainloader, testloader, optimizer, criterion,
         number of epochs between logs.
     cuda : bool
         cuda available.
+    scheduler : 
+        learning rate scheduler
 
     Returns
     -------

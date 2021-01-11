@@ -82,6 +82,53 @@ def svrg_train_epoch(model, snapshot_model, trainloader, learning_rate, freq, cr
 def train_loop_SVRG(model, trainloader, testloader, learning_rate, freq,
                     criterion, epochs_to_run, log_interval, cuda,
                     milestones=None, gamma=None):
+    """
+    Training loop of SVRG
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+        model to train
+    trainloader : torch.utils.data.DataLoader
+        Trainloader object.
+    testloader : torch.utils.data.DataLoader
+        Testloader object.
+    learning_rate : float
+        Learning rate to use.
+    freq : int
+        frequency of gradient estimate (in epochs).
+    criterion : torch.nn._Loss
+        loss function.
+    epochs_to_run : int
+        Number of epochs to train.
+    llog_interval : int
+        number of epochs between logs.
+    cuda : bool
+        cuda available.
+    milestones : list of int, optional
+        If set, List of epochs at which to change the learning rate. The default is None.
+    gamma : float, optional
+        If set, the constant with which to scale the learning rate at each milestone. The default is None.
+
+    Returns
+    -------
+        
+    train_losses : list of float
+        train losses after each epoch.
+    test_losses : list of float
+        test losses after each epoch..
+    train_accuracies : list of float
+        train accuracies after each epoch.
+    test_accuracies : list of float
+        test accuracies after each epoch.
+    model_state_dict : torch.nn.Module
+        trained model.
+    snapshot_model_state_dict : torch.nn.Module
+        snapshot model.
+    curr_batch_iter : int
+        Last batch iteration.
+
+    """
     train_losses = []
     test_losses = []
     train_accuracies = []

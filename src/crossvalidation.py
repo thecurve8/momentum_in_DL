@@ -38,6 +38,28 @@ def build_k_indices(n, K, seed):
     return res
 
 def create_train_val_dataloader(k, k_indices, dataset, args):
+    """
+    Creates Train and Validation dataloaders.
+
+    Parameters
+    ----------
+    k : int
+        number of the folds.
+    k_indices : array
+        2-dimensional array with shuffled indices arranged in k rows, corresponding to indices for each fold.
+    dataset : dataset
+        Dataset from which to create the dataloaders.
+    args : dict
+        Dictionary with the arguments of the experiment.
+
+    Returns
+    -------
+    trainloader : torch.utils.data.DataLoader
+        Trainloader object.
+    validationloader : torch.utils.data.DataLoader
+        Testloader object.
+
+    """
     train_indices = np.delete(k_indices, k, args['seed']).flatten()
     validation_indices = k_indices[k]
 
@@ -50,6 +72,30 @@ def create_train_val_dataloader(k, k_indices, dataset, args):
     return trainloader, validationloader
 
 def cross_validation_adam(model_initial, learning_rates, dataset, K, criterion, args):
+    """
+    Performs cross-validation for learning rate of ADAM.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    learning_rates : list of float
+        List of learning rates to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -86,6 +132,31 @@ def cross_validation_adam(model_initial, learning_rates, dataset, K, criterion, 
     return return_dict
 
 def cross_validation_adagrad(model_initial, learning_rates, dataset, K, criterion, args):
+    """
+    Performs cross-validation for learning rate of AdaGrad.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    learning_rates : list of float
+        List of learning rates to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -122,6 +193,31 @@ def cross_validation_adagrad(model_initial, learning_rates, dataset, K, criterio
     return return_dict
 
 def cross_validation_sgd(model_initial, learning_rates, dataset, K, criterion, args):
+    """
+    Performs cross-validation for learning rate of SGD.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    learning_rates : list of float
+        List of learning rates to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -158,6 +254,31 @@ def cross_validation_sgd(model_initial, learning_rates, dataset, K, criterion, a
     return return_dict
 
 def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, args):
+    """
+    Performs cross-validation for learning rate of SVRG.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    learning_rates : list of float
+        List of learning rates to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -195,6 +316,31 @@ def cross_validation_svrg(model_initial, learning_rates, dataset, K, criterion, 
     return return_dict
 
 def cross_validation_storm_c(model_initial, c_values, dataset, K, criterion, args):
+    """
+    Performs cross-validation for hyperparameter c of SVRG.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    c_values : list of float
+        list of c values to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
@@ -232,6 +378,31 @@ def cross_validation_storm_c(model_initial, c_values, dataset, K, criterion, arg
     return return_dict
 
 def cross_validation_storm_k(model_initial, k_values, dataset, K, criterion, args):
+    """
+    Performs cross-validation for hyperparameter k of SVRG.
+
+    Parameters
+    ----------
+    model_initial : torch.nn.Module
+        model to train.
+    k_values : list of float
+        list of k values to try.
+    dataset : dataset
+        Dataset from which to do the cross-validation.
+    K : int
+        Number of folds.
+    criterion :  torch.nn._Loss
+        loss function.
+    args : dict
+        Dictionary with eperiment parameters.
+
+
+    Returns
+    -------
+    return_dict : dict
+        dict with results of cross-vallidation.
+
+    """
     
     k_indices = build_k_indices(len(dataset), K, args['seed'])
     
