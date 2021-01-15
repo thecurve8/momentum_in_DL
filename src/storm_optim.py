@@ -111,16 +111,16 @@ def train_loop_storm_optim(model, trainloader, testloader, k, w, c, criterion,
 
     Returns
     -------
-    train_losses : TYPE
-        DESCRIPTION.
-    test_losses : TYPE
-        DESCRIPTION.
-    train_accuracies : TYPE
-        DESCRIPTION.
-    test_accuracies : TYPE
-        DESCRIPTION.
-    model_state_dict : TYPE
-        DESCRIPTION.
+    train_losses : list of float
+        train losses after each epoch.
+    test_losses : list of float
+        test losses after each epoch..
+    train_accuracies : list of float
+        train accuracies after each epoch.
+    test_accuracies : list of float
+        test accuracies after each epoch.
+    model_state_dict : dict
+        Final state of the model.
 
     """
     
