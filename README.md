@@ -1,6 +1,7 @@
 # Stochastic variance reduced gradient methods for training DeepNeural Networks
 
 *by Alexander Apostolov*
+
 *Advised by: Dr. Tatjana Chavdarova and Prof. Dr. Martin Jaggi*
 
 This project focuses on getting empirical insights on why stochstic variance reduced methods who work better than other stochastic methods such as SGD or ADAM theoretically and on small neural networks do have worse results on deep neural networks.
