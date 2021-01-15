@@ -16,13 +16,13 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[tracking=true,kerning=true,spacing=true]{microtype}
-\usepackage[DIV=14,BCOR=2mm,headinclude=true,footinclude=false]{typearea}
+\usepackage[DIV=12,BCOR=2mm,headinclude=true,footinclude=false]{typearea}
 \usepackage[
   backend=biber,
   style=numeric-comp,
   hyperref=true,
-  %style=numeric,
-  %sorting=ydnt,
+  style=numeric,
+  sorting=none,
   defernumbers=true,
   maxbibnames=99,
 ]{biblatex}
@@ -31,7 +31,7 @@
 \setcounter{biburlucpenalty}{8000}
 \sloppy
 \usepackage[french,german,english]{babel}
-\usepackage{utopia}
+\usepackage{fourier}
 \usepackage{setspace} % slightly larger spacing
 \setstretch{1.1}
 \usepackage{hyperref}
@@ -59,7 +59,7 @@
   \renewcommand{\projectterm}{Bachelor Thesis}
 \fi
 \if@epflmscproject
-  \renewcommand{\projectterm}{Master Project Report}
+  \renewcommand{\projectterm}{Semester Project Report}
 \fi
 \if@epflbscproject
   \renewcommand{\projectterm}{Bachelor Project Report}
@@ -123,7 +123,8 @@ by \@author\par
 {\LARGE \projectterm}\par
 \vspace{\drop}
 
-\flushleft
+%\flushleft
+\centering
 {Project advised by:}\par
 \vspace{1.5\baselineskip}
 \@adviser\\
@@ -134,9 +135,9 @@ Advising Professor \\[1\baselineskip]
 Supervisor\par
 \centering
 \vspace{8\baselineskip}
-EPFL IC MLO  \\
-INJ XXX (Bâtiment INJ) \\
-Station XX \\
+EPFL IC IINFCOM MLO \\
+INJ 130 (Bâtiment INJ) \\
+Station 14 \\
 CH-1015 Lausanne \\[\baselineskip]
 \today
 \par
@@ -172,14 +173,11 @@ and show them with \texttt{\textbackslash{}makededication}.
 }
 
 \def\@acknowledgments{%
-This is where you thank those who supported you on this journey. Good examples
-are your significant other, family, advisers, and other parties that inspired
-you during this project. Generally this section is about 1/2 page to a page.
+I would like to thank Tatjana who helped me with advice, ideas and suggestions for this project throughout the whole semester. This was especially helpful for me in this special semester marked by the COVID pandemic because of which we have not had the chance to meet once in person. Despite these unfortunate circumstances, Tatjana helped to make this project extremely interesting and enriching for me.
 
-Consider acknowledging the use and location of this thesis package.
+I would like to also thank Pr. Jaggi who took me in his lab and helped me find an interesting project idea. I would also like to thank him for giving me access to different computational resources that were needed for this project.
 
-Define your acknowledgments in \texttt{\textbackslash{}acknowledgments\{...\}}
-and show them with \texttt{\textbackslash{}makeacks}.
+I would also like to thank Mathias Payer for his \href{https://github.com/HexHive/thesis_template}{available thesis template} that I am using here.
 }
 \newcommand{\acknowledgments}[1]{
   \def\@acknowledgments{#1}
@@ -203,7 +201,7 @@ and show them with \texttt{\textbackslash{}makeacks}.
 \def\abstract{\cleardoublepage
 \chapter*{Abstract}
 \markboth{Abstract}{Abstract}
-\addcontentsline{toc}{chapter}{Abstract (English/Français)}}
+\addcontentsline{toc}{chapter}{Abstract }}
 \def\endabstract{}
 
 \def\frenchabstract{\begin{otherlanguage}{french}
