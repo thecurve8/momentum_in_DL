@@ -37,9 +37,9 @@
 
 \begin{abstract}
 
-This project focuses on analyzing the effect of stochastic variance reduced gradient methods on training Deep Neural Networks (DNNs). This project mainly focuses on one stochastic variance reduced gradient methods, SVRG and gives some insights about another one, STORM. Despite their proved theoretical advantages and their relative straightforwardness, these methods remain unpopular because they are performing poorly on popular deep neural networks for reasons that are yet not theoretically proved.  
+This project focuses on analyzing the effect of stochastic variance reduced gradient methods on training Deep Neural Networks (DNNs). This project mainly focuses on one stochastic variance reduced gradient methods, SVRG and gives some insights about another one, STORM. Despite their proved theoretical advantages and their relative straightforwardness, these methods remain unpopular because they are performing poorly on popular deep neural networks for reasons that are yet not theoretically proven.  
 
-This project follows an empirical approach to improve our understanding  why variance reduction method fail to  perform well on DNNs. We show that these methods perform well on shallow neural networks and give insights on why we generally have worse results on deeper architectures. We also show that removing batch-normalization layers from deep neural networks tends to help stochastic variance reduced gradient methods when compared to other stochastic methods in the same setup.
+This project follows an empirical approach to improve our understanding of why variance reduction methods fail to  perform well on DNNs. We show that these methods give good results on shallow neural networks and we give insights on why we generally have worse results on deeper architectures. We also show that removing batch-normalization layers from deep neural networks tends to help stochastic variance reduced gradient methods when compared to other stochastic methods in the same setup.
 
 \end{abstract}
 
@@ -50,11 +50,11 @@ This project follows an empirical approach to improve our understanding  why var
 %%%%%%%%%%%%%%%%%%%%%%
 
 Optimization problems are a centerpiece of many machine learning tasks and choosing an appropriate optimization algorithm is a crucial step to get good results. Stochastic variance reduced gradient methods\footnote{Herein referred as \textit{Variance Reduced},  for short.} have been shown to theoretically have better convergence than stochastic gradient descent methods. However, they are not widely used as they seem to be outperformed on most standard deeper neural networks.  
-These worst performances have been empirically described~\cite{Defazio2019} but there are no theoretical insights on the reasons for that.  
+These worse performances have been empirically described~\cite{Defazio2019} but there are no theoretical insights on the reasons for that.  
 
-This project tries to build an empirical approach to improve our understanding on why variance reduction methods fail to perform well on DNNs. To do so we look at \textbf{Stochastic Variance Reduced Gradient} \textbf{(SVRG)}~\cite{NIPS2013_ac1dd209} and \textbf{STOchastic Recursive Momentum} \textbf{(STORM)}~\cite{Cutkosky2019storm}, two variance reduced methods and compare them on different architectures. We compare them with \textbf{Stochastic Gradient Descent (SGD)} and \textbf{Adam}~\cite{kingma2014adam}.  
+This project tries to build an empirical approach to improve our understanding on why variance reduction methods fail to perform well on DNNs. To do so, we look at \textbf{Stochastic Variance Reduced Gradient} \textbf{(SVRG)}~\cite{NIPS2013_ac1dd209} and \textbf{STOchastic Recursive Momentum} \textbf{(STORM)}~\cite{Cutkosky2019storm}, two variance reduced methods and compare them on different architectures. We compare them with \textbf{Stochastic Gradient Descent (SGD)} and \textbf{Adam}~\cite{kingma2014adam}.  
 
-We think that using batch-normalization layers in the neural network might be one of the reasons of the worse performance of variance reduced methods, so we perform different experiments using networks with and without these layers. Finally, we think that having better weight initialization can help in the cases when we are training on DNNs without batch-normalization layers, so we try to observe effects by using \textbf{MetaInit}~\cite{NEURIPS2019_876e8108}, an algorithm that helps finding weights before starting to train a model.
+We think that using batch-normalization layers in a neural network might be one of the reasons of the worse performance of variance reduced methods, so we perform different experiments using networks with and without these layers. Finally, we think that having better weight initialization can help in the cases when we are training on DNNs without batch-normalization layers, so we try to observe effects by using \textbf{MetaInit}~\cite{NEURIPS2019_876e8108}, an algorithm that helps finding weights before starting to train a model.
 
 
 %%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ The goal is to find a solution to the following ``finite-sum'' problem:
     \min_w F(w),~~F(w)=\frac{1}{n}\sum_{i=1}^n f_i(w).
 \end{equation}
 
-There are many examples of such functions we need to minimize, they are often referred to as loss functions. When trying to do predictions in $\mathbb{R}$ using features very common ones are Mean Square Error (MSE), Mean Absolute Error (MAE). Given a dataset $S=\{(y_i, x_i)_{i=1\}^n}$ where $y_i \in \mathbb{R}$ and $x_i \in \mathbb{R^d}$ and a prediction function $p_w : \mathbb{R^d} \mapsto \mathbb{R}$ depending on some weights or parameters $w$, the Mean Square Error is defined as:
+There are many examples of such functions we need to minimize, they are often referred to as loss functions. When trying to do predictions in $\mathbb{R}$ using features very common ones are Mean Square Error (MSE) and Mean Absolute Error (MAE). Given a dataset $S=\{(y_i, x_i)\}_{i=1}^n$ where $y_i \in \mathbb{R}$ and $x_i \in \mathbb{R}^d$ and a prediction function $p_w : \mathbb{R}^d \mapsto \mathbb{R}$ depending on some weights or parameters $w$, the Mean Square Error is defined as:
 $$F_{MSE}(w) = \frac{1}{2n}\sum_{i=1}^n(y_i - p_w(x_i))^2$$
 In the same setting, the Mean Absolute Error is defined as:
 $$F_{MAE}(w) = \frac{1}{n}\sum_{i=1}^n\mathopen|y_i - p_w(x_i)\mathclose|$$
@@ -82,13 +82,13 @@ A widely used and straightforward method to solve \autoref{eq:minimzing_function
 where $\eta_t$ is the learning rate at iteration $t$.
 A problem with Gradient Descent is that each update step requires computing the gradient over the whole dataset. This can require a lot of computations, making this algorithm inefficient for some tasks. 
 
-This drawback is why \textbf{Stochastic Gradient Descent (SGD)} has been widely adopted. Instead of computing the gradient over the whole dataset at each iteration, we an only use the gradient with respect to one datapoint. The algorithm is given by the following update rule. At each iteration $t=1,2 \dots T$, sample one datapoint $i_t \in \{1,\dots n\}$ uniformly at random:
+This drawback is why \textbf{Stochastic Gradient Descent (SGD)} has been widely adopted. Instead of computing the gradient over the whole dataset at each iteration, we only use the gradient with respect to one datapoint. The algorithm is given by the following update rule. At each iteration $t=1,2 \dots T$, sample one datapoint $i_t \in \{1,\dots n\}$ uniformly at random:
 \begin{equation}\label{eq:SGD}
     w^{(t)} = w^{(t-1)} -\eta_t \nabla f_{i_t}(w^{(t-1)})\,,
 \end{equation}
 where $\eta_t$ is the learning rate at iteration $t$.
 
-This idea behind this trick is that it decreases the computational complexity of each iteration by a factor of $\theta(1/n)$ and one can show that in expectation the gradient in SGD is equal to the full gradient over the whole dataset:
+The idea behind this trick is that it decreases the computational complexity of each iteration by a factor of $\theta(1/n)$ and one can show that in expectation the gradient in SGD is equal to the full gradient over the whole dataset:
 \begin{equation}\label{eq:unbaisedSGD}
     \mathbb{E}[\nabla f_{i_t}(w)] = \nabla F(w)\,.
 \end{equation}
@@ -103,7 +103,7 @@ Both Stochastic Gradient Descent and Mini-batch Stochastic Gradient Descent use 
 
 In this project we will analyze two variance reduced algorithms: \textbf{Stochastic Variance Reduced Gradient} \textbf{(SVRG)}~\cite{NIPS2013_ac1dd209} and \textbf{STOchastic Recursive Momentum} \textbf{(STORM)}~\cite{Cutkosky2019storm}. 
 
-SVRG is an iterative algorithm whose goal is to solve \autoref{eq:minimzing_function} by using elements of Stochastic Gradient Descent to ensure fast iterations in terms of computational complexity and Gradient Descent to get low variance. The main idea behind this algorithm presented by Rie Johnson and Tong Zhang in 2013 is that we do a snapshot $\Tilde{w}$ of the parameters every $m$ iterations and compute the gradient $\Tilde{\mu}$ over the whole dataset with respect to $\Tilde{w}$ to get an estimate of the true gradient. Similarly to SGD, we take a datapoint $x_{i_t}$(or more generally a mini-batch) uniformly at random at each iteration $t=1,2,\dots T$ and apply the following update rule:
+SVRG is an iterative algorithm whose goal is to solve \autoref{eq:minimzing_function} by using elements of Stochastic Gradient Descent to ensure fast iterations in terms of computational complexity and elements of Gradient Descent to get low variance. The main idea behind this algorithm, presented by Rie Johnson and Tong Zhang in 2013, is that we do a snapshot $\Tilde{w}$ of the parameters every $m$ iterations and compute the gradient $\Tilde{\mu}$ over the whole dataset with respect to $\Tilde{w}$ to get an estimate of the true gradient. Similarly to SGD, we take a datapoint $x_{i_t}$(or more generally a mini-batch) uniformly at random at each iteration $t=1,2,\dots T$ and apply the following update rule:
 \begin{equation}\label{eq:updateSVRG}
     w^{(t)} = w^{(t-1)} -\eta(\nabla f_{i_t}(w^{(t-1)}) - \nabla f_{i_t}(\Tilde{w}) + \Tilde{\mu})\,,
 \end{equation}
@@ -148,7 +148,7 @@ For completeness, the pseudocode of the SVRG procedure is given in \autoref{algo
     \label{algo:svrg}
 \end{algorithm}
 
-The second variance reduction method we are considering is STOchastic Recursive Momentum (STORM) presented by Ashok Cutkosky and Francesco Orabona in 2019. This is an iterative algorithm to solve \autoref{eq:minimzing_function} similarly to SGD with momentum. At each iteration $t$ an datapoint $x_{i_t}$ (or more generally a mini-batch) is chosen uniformly at random and the following update rule is applied:
+The second variance reduction method we are considering is STOchastic Recursive Momentum (STORM) presented by Ashok Cutkosky and Francesco Orabona in 2019. This is an iterative algorithm to solve \autoref{eq:minimzing_function} similarly to SGD with momentum. At each iteration $t$ a datapoint $x_{i_t}$ (or more generally a mini-batch) is chosen uniformly at random and the following update rule is applied:
 \begin{equation}\label{eq:STORM}
     d^{(t)} = (1-a)d^{(t-1)} + a\nabla f_{i_t}(w^{(t)}) + (1-a)(\nabla f_{i_t}(w^{(t)}) +  \nabla f_{i_t}(w^{(t-1)}))\,,
 \end{equation}
@@ -158,7 +158,7 @@ with
 \end{equation}
 The complete procedure is given in \autoref{algo:storm}.
 
-Two thing to notice here are that the learning rate changes at each iteration and that \autoref{eq:STORM} is very similar to SGD with momentum. In fact the first two terms are the same and when $w^{(t)} \approx w^{(t-1)}$, then the last term of the equality tends to 0. Then the update is exactly the same as SGD with momentum.
+Two thing to notice here are that the learning rate changes at each iteration and that \autoref{eq:STORM} is very similar to SGD with momentum. In fact the first two terms are the same and when $w^{(t)} \approx w^{(t-1)}$ the last term of the equality tends to 0. Then the update is exactly the same as SGD with momentum.
 
 \begin{algorithm}[H]
     \DontPrintSemicolon
@@ -179,11 +179,11 @@ Two thing to notice here are that the learning rate changes at each iteration an
     \label{algo:storm}
 \end{algorithm}
 
-One can reflect on the differences between SVRG and STORM. A disadvantage of STORM is that is not straightforward to get clear insights about it and it has more hyperparameters than SVRG that are not self-evident how to fix as discussed with one of the authors of the paper.  On the other hand a disadvantage of SVRG is that it needs to calculate the full gradient every m epochs which makes for a significantly slower iteration. One can also note that these two algorithms both need at least two gradient calculations per iteration compered to 1 for regular GD/SGD.
+One can reflect on the differences between SVRG and STORM. A disadvantage of STORM is that is not straightforward to get clear insights about it and it has more hyperparameters than SVRG that are not self-evident how to fix as discussed with one of the authors of the paper.  On the other hand a disadvantage of SVRG is that it needs to calculate the full gradient every m epochs which makes for a significantly slower iteration. One can also note that these two algorithms both need at least two gradient calculations per iteration compared to one for regular SGD.
 
 %Explanation Adam
-Throughout the experiments of this project we also use the optimization algorithm Adam~\cite{kingma2014adam}. This method presented by Diederik P. Kingma and Jimmy Lei Ba is widely used as it for optimization of stochastic objectives as it is straightforward to implement, implemented in many standard libraries for machine learning, is computationally efficient,
-has little memory requirements and shows very good results for various tasks. Adam uses adaptive estimates of first and second order moments to adapt the learning rates of every parameter of the network separately as opposed to just one global learning rate in GD or SGD. These adaptive learning rates are computed from moving averages of the $1^{st}$ and $2^{nd}$ order moments of the loss function and help reach better results during training. The procedure is presented in \autoref{algo:Adam}. 
+Throughout the experiments of this project we also use the optimization algorithm Adam~\cite{kingma2014adam}. This method presented by Diederik P. Kingma and Jimmy Lei Ba is widely used for optimization of stochastic objectives as it is straightforward to implement, is computationally efficient,
+has little memory requirements, shows very good results for various tasks and present in many standard libraries for machine learning. Adam uses adaptive estimates of first and second order moments to adapt the learning rates of every parameter of the network separately as opposed to just one global learning rate in GD or SGD. These adaptive learning rates are computed from moving averages of the $1^{st}$ and $2^{nd}$ order moments of the loss function and help reach better results during training. The procedure is presented in \autoref{algo:Adam}. 
  
 \begin{algorithm}[H]
     \DontPrintSemicolon
@@ -216,7 +216,7 @@ Another important theoretical aspect for this project are batch-normalization la
 where x is the output of the previous layer (i.e. the input to the batch-normalization layer), y is the output of the batch-normalization layer and $\epsilon$ is a small number added for numerical stability in case of 0 variance. The batch-normalization layers however do not have a direct access to the value of $\mathbb{E}[x]$ and $\mathbb{V}ar[x]$ as $x's$ are only seen throughout the training, so the batch-normalization layer keeps running estimates for these two values by using average computations with momentum. 
 
 %Explain Metainit
-Another concept we try in this project is initializing weights of the model before training with a method called \textbf{MetaInit}. The method was presented in \textit{MetaInit: Initializing learning by learning to initialize}~\cite{NEURIPS2019_876e8108} in 2019. Deep Neural networks can be difficult to train and their performance depends heavily on how weights are initialized. The hypothesis made by Yann N. Dauphin, Samuel Schoenholz, the authors of the MetaInit paper is that it is better to start training in regions of the optimization landscape that look locally linear with minimal second order effects. To measure this they use metric which is called gradient quotient (GQ) using \autoref{eq:GQ}. The goal of the MetaInit algorithm is to minimize this gradient quotient before training using Gradient Descent and by doing so, MetaInit selects the initial weights for training.
+Another concept we try in this project is initializing weights of the model before training with a method called \textbf{MetaInit}. The method was presented in \textit{MetaInit: Initializing learning by learning to initialize}~\cite{NEURIPS2019_876e8108} in 2019. Deep Neural networks can be difficult to train and their performance depends heavily on how weights are initialized. The hypothesis made by Yann N. Dauphin, Samuel Schoenholz, the authors of the MetaInit paper, is that it is better to start training in regions of the optimization landscape that look locally linear with minimal second order effects. To measure this they use a metric which they call gradient quotient (GQ) defined in \autoref{eq:GQ}. The goal of the MetaInit algorithm is to minimize this gradient quotient before training using Gradient Descent and by doing so, MetaInit selects the initial weights for training.
 
 \begin{equation}\label{eq:GQ}
     GQ(L,\theta) = \frac{1}{N}\biggl\lVert\frac{\textbf{g}(\theta-\textbf{g}(\theta))}{\textbf{g}(\theta)+\epsilon}-1 \biggr\rVert_1
@@ -224,7 +224,7 @@ Another concept we try in this project is initializing weights of the model befo
 
 Where $\theta \in \mathbb{R}^N$ are the parameters of the network, $l(x, \theta)$ is the loss function, $L(\theta)$ the mean over a mini-batch, $\textbf{g}(\theta) = \nabla L$, $\epsilon = \epsilon_0(2_{\textbf{g}(\theta)\geq 0}-1)$ computes a damping factor with the right sign for each element and $\epsilon_0$ is a small constant.
 
-Examples of different gradient quotient are given in \autoref{fig:GQexamples} take from the original paper describing MetaInit.
+Examples of different gradient quotient are given in \autoref{fig:GQexamples} taken from the original paper describing MetaInit.
 
 \begin{figure}
     \centering
@@ -233,7 +233,7 @@ Examples of different gradient quotient are given in \autoref{fig:GQexamples} ta
     \label{fig:GQexamples}
 \end{figure}
 
-\chapter{Empirical approach to improve our understanding  why variance reduction method fail to  perform well on DNNs}
+\chapter{Empirical approach to improve our understanding  why variance reduction methods fail to  perform well on DNNs}
 
 The main hypothesis we want to test in this paper is \textbf{whether there is a link between the usage of batch-normalization layers in deeper neural networks and the worse results of variance reduced methods}.
 A paper from 2019 by Aaron Defazio and Léon Bottou $\textit{On the Ineffectiveness of Variance Reduced Optimization for Deep Learning}$ suggests that applying these techniques on hard non-convex problems generally fails to give good results. However, we note that their analysis does not give any theoretical insights on why this would be the case. Moreover, we see that when testing their assumptions on deeper networks, the architectures they use include batch-normalization layers~\cite{ioffe2015batch}. These layers, because they use averages throughout training as explained in \autoref{eq:BN} break the assumptions that the gradient estimates in \autoref{eq:updateSVRG} for SVRG and \autoref{eq:STORM} for STORM are not unbiased. To test it we compare the results on networks with and without batch-normalization layers.
@@ -243,11 +243,11 @@ Another hypothesis we want to test is \textbf{whether initialization methods to 
 
 \chapter{Experiments}
 %%%%%%%%%%%%%%%%
-\section{Benchmark on shallow Neural Networks}
+\section{Benchmark on shallow neural networks}
 %%%%%%%%%%%%%%%%
-To get insights on how variance reduced methods work we first perform a benchmark on a shallow neural network with different algorithms. We choose to use SVRG, STORM, SGD, Adam and AdaGrad. The first two are the only ones that have a variance reduction effect, SGD and Adam are chosen since they are very popular optimization algorithms and AdaGrad is also benchmarked as it is compared with STORM in its original paper. 
+To get insights on how variance reduced methods work we first perform a benchmark on a shallow neural network with different algorithms. We choose to use SVRG, STORM, SGD, Adam and AdaGrad~\cite{JMLR:v12:duchi11a}. The first two are the only ones that have a variance reduction effect, SGD and Adam are chosen since they are very popular optimization algorithms and AdaGrad is also benchmarked as it is compared with STORM in its original paper. 
 
-To perform the all subsequent experiments, we need to implement the two variance reduced methods, SVRG and STORM, as there is no official pytorch implementation. The code can be found in the repository of this project.
+To perform all subsequent experiments, we need to implement the two variance reduced methods, SVRG and STORM, as there is no official and available pytorch implementation. The code can be found in the repository of this project.
 
 We compare them on a classification task, recognizing hand-written digits from the MNIST dataset~\cite{lecun2010mnist}. You can see example digits in~\autoref{fig:MNIST_examples}. 
 
@@ -269,7 +269,7 @@ The used architecture is LeNet~\cite{leNet}. The network is presented in \autore
 \end{figure}
 
 To compare the algorithm we performed a 4-fold cross validation procedure. We did a grid search for the hyperparameters for the algorithms of interest. The considered values are presented in~\autoref{tbl:CVhyperparametersMNIST}. All cross validations were performed for $100$ epochs as this appeared to be long enough for reaching convergence for the algorithms and hyperparameters of interest.  
-Note that the hyperparameter $w$ in STORM is not tuned since the original paper already suggests using a value of 0.1 for classifying the MNIST dataset, so we used the proposed value as testing a third hyperparameter would have significantly increased the computational time needed to run the cross-validation.
+Note that the hyperparameter $w$ in STORM is not tuned since the original paper already suggests using a value of 0.1 for classifying the MNIST dataset, so we used the proposed value as testing a third hyperparameter would have significantly increased the computational time need to run the cross-validation.
 
 
 All experiments are done wit a fixed seed set to 1. We are using a batch size of 32 samples for all runs. The objective we want to minimize is the cross-entropy loss. Given C classes, this loss can be described as:
@@ -330,13 +330,13 @@ We thus see that as expected SVRG and STORM outperform the other stochastic meth
 %%%%%%%%%%%%%%%%%%%%%%%%
 \section{Benchmark on deeper neural networks}
 %%%%%%%%%%%%%%%%%%%%%%%%
-To check the effect we are hypothesizing we choose a deep neural network with batch-normalization layers and compare Adam, SGD and SVRG. Because of the increased required computational resources we are not able to perform a proper Cross-Validation procedure, rather we select $5\%$ of the training set and use it as a validation set to select the best hyperparameters for each model and then compare them on the test set. Moreover, for the same reason of increased computational time, we are unable to to get meaningful results for STORM as there are more hyperparameters to tune and we don't have insights to properly tune them. However, we think that results found on SVRG could probably also be applied to other variance reduced methods such as STORM.
+To check the effect we are hypothesizing about the effect of batch-normalization layers, we first need to have results on DNNs with these layers. We choose a deep neural network with batch-normalization layers and compare Adam, SGD and SVRG. Because of the increased required computational resources we are not able to perform a proper cross-validation procedure, rather we select $5\%$ of the training set and use it as a validation set to select the best hyperparameters for each model and then compare them on the test set. Moreover, for the same reason of increased computational time, we are unable to to get meaningful results for STORM as there are more hyperparameters to tune and we don't have insights on how to properly tune them. However, we think that results found on SVRG could probably also be applied to other variance reduced methods such as STORM.
 
 
 \subsection{ResNet18 with batch-normalization layers}
 
 
-The deep neural network we choose to perform our experiments on is ResNet18. This is a network for image recognition introduced in 2015~\cite{he2015deep}. The key idea of this model is that it is constituted of residual learning building blocks with forward connections as presented in~\autoref{fig:building_block_resnet}. These are then put together one after the other as presented in~\autoref{fig:resnet18}. ResNet models with batch-normalization layers have a batch-normalization layer after each convolution layer. If not specifically specified, the ResNet model have batch-normalization layers in all subsequent experiments.
+The deep neural network we choose to perform our experiments on is ResNet18. This is a network for image recognition introduced in 2015~\cite{he2015deep}. The key idea of this model is that it is constituted of residual learning building blocks with forward connections as presented in~\autoref{fig:building_block_resnet}. These are then put together one after the other as presented in~\autoref{fig:resnet18}. ResNet models with batch-normalization layers have a batch-normalization layer after each convolution layer. If not otherwise specified, the ResNet models have batch-normalization layers in all subsequent experiments.
 
 \begin{figure}
     \centering
@@ -352,7 +352,7 @@ The deep neural network we choose to perform our experiments on is ResNet18. Thi
     \label{fig:resnet18}
 \end{figure}
 
-The image dataset we are trying to classify is CIFAR-10~\cite{Krizhevsky09learningmultiple}. These images are representing 10 classes: plane, car, bird, cat, deer, dog, frog, horse, ship and truck. A small sample is given in \autoref{fig:CIFAR10_sample}.
+The task we perform with this model is classifying the image dataset CIFAR-10~\cite{Krizhevsky09learningmultiple}. These images are representing 10 classes: plane, car, bird, cat, deer, dog, frog, horse, ship and truck. A small sample is given in \autoref{fig:CIFAR10_sample}.
 
 \begin{figure}
     \centering
@@ -402,7 +402,7 @@ We see that in this setting the variance reduced method, SVRG is not outperformi
 
 \subsection{ResNet18 without batch-normalization layers}
 
-To test our hypothesis we do the same analysis on the same network, ResNet18, except that this time we remove the batch-normalization layers. We do the same validation process with the same values (see \autoref{tbl:ChoicesHyperparametersCIFAR}). One think that we notice during this phase is that finding the correct hyperparameters becomes even more crucial in this scenario, as there are some choices for which the values become irrelevant. For example, we started getting $NaN$ results for high learning rates of SGD. This might be due to problems of exploding gradients but we do not explore the exact reasons further as other choices of hyperparameters yield good results. However, it is important to note that removing batch-normalization layers can make some choices of hyperparameters completely irrelevant, although they were still getting acceptable results, although not the best, in a setting with a network with batch-normalization layers.
+To test our hypothesis we do the same analysis on the same network, ResNet18, except that this time we remove the batch-normalization layers. We do the same validation process with the same values (see \autoref{tbl:ChoicesHyperparametersCIFAR}). One think that we notice during this phase is that finding the correct hyperparameters becomes even more crucial in this scenario, as there are some choices for which the values become irrelevant. For example, we start getting $NaN$ results for high learning rates of SGD. This might be due to problems of exploding gradients but we do not explore the exact reasons further as other choices of hyperparameters yield good results. However, it is important to note that removing batch-normalization layers can make some choices of hyperparameters completely irrelevant, although they were still getting acceptable results, although not the best, in a setting with a network with batch-normalization layers.
 
 The selected hyperparameters for each algorithm are presented in \autoref{tbl:BestHyperparametersResNet18noBN}.
 
@@ -413,7 +413,7 @@ The selected hyperparameters for each algorithm are presented in \autoref{tbl:Be
              \input{tables/hyperparametersResultsResNet18noBN}
         \end{tabular}
     \end{center}
-    \caption{Best hyperparameters after validation for the different algorithms on ResNet18 for classification of CIFAR10 images.
+    \caption{Best hyperparameters after validation for the different algorithms on ResNet18 with BN layers for classification of CIFAR10 images.
     }
     \label{tbl:BestHyperparametersResNet18noBN}
 \end{table}
@@ -451,7 +451,7 @@ For this new architecture we perform a similar classification task but on a bigg
     \label{fig:CIFAR100_sample}
 \end{figure}
 
-For this task we perform on the images the same transformations and preprocessing as with CIFAR10. We first pad them with 4 pixels on each side, then perform a random square crop of size 32×32 and then perform a horizontal flip with probability 0.5 and finally we normalize each channel (reg, green and blue) with the means and standard deviations as calculated from the training set. Then we repeat the same steps as we did for ResNet18. We first use a validation set of $5\%$ to select the best hyperparameters and then compare on the test set the cross entropy loss with the best tuned hyperparameter for Adam, SGD and SVRG. The hyperparameters we checked in the validation phase are presented in \autoref{tbl:ChoicesHyperparametersCIFAR100}. We notice that we usually need similar learning rates than the smaller ResNet18 network, as shown in \autoref{tbl:BestHyperparametersCIFAR100}.
+For this task, we perform the same transformations and preprocessing as with CIFAR10. We first pad the images with 4 pixels on each side, then perform a random square crop of size 32×32 and then perform a horizontal flip with probability 0.5 and finally we normalize each channel (reg, green and blue) with the means and standard deviations as calculated from the training set. Then we repeat the same steps as we did for ResNet18. We first use a validation set of $5\%$ to select the best hyperparameters and then compare on the test set the cross entropy loss with the best tuned hyperparameter for Adam, SGD and SVRG. The hyperparameters we checked in the validation phase are presented in \autoref{tbl:ChoicesHyperparametersCIFAR100}. We notice that we usually need similar learning rates than the smaller ResNet18 network, as shown in \autoref{tbl:BestHyperparametersCIFAR100}.
 
 \begin{table}
     \begin{center}
@@ -492,7 +492,7 @@ The results of the test set are presented in \autoref{fig:ResNet101results}. It 
 
 \subsection{ResNet101 without batch-normalization layers}\label{seq:ResNet101noBN}
 
-We perform the exact same setup as what we did with above with ResNet101 and CIFAR100, except that this time we remove the batch-normalization layers to test once more the hypothesis we formulated at the beginning. We check the same hyperparameters on the validation set (see \autoref{tbl:ChoicesHyperparametersCIFAR100}) and the best learning rate for each algorithm is presented in \autoref{tbl:BestHyperparametersCIFAR100noBN}.
+We perform the exact same setup as what we did above with ResNet101 and CIFAR100, except that this time we remove the batch-normalization layers to test once more the hypothesis we formulated at the beginning. We check the same hyperparameters on the validation set (see \autoref{tbl:ChoicesHyperparametersCIFAR100}) and the best learning rate for each algorithm is presented in \autoref{tbl:BestHyperparametersCIFAR100noBN}.
 
 \begin{table}
     \begin{center}
@@ -516,7 +516,12 @@ The results on the test set are presented in \autoref{fig:ResNet101noBNresults}.
 \end{figure}
 
 \section{Effects of MetaInit}
-In the previous experiments we see that it seems that SVRG gets comparable and even sometimes better results than Adam and SGD in the setup without batch-normalization. However, we note that all results of all the 3 algorithms worsen a little bit relative to their respective results in the case when we use batch-normalization layers. This might be due to effects of the batch-normalization layers which help reach better convergence that are lost when removing these layers. To counter this we think that using better initialization methods than the ones used by default in Pytorch could get better results in the setup without batch-normalization layers. For now, all experiments we did used the default initialization implemented by Pytorch as of January 2021, some examples are given below. \autoref{eq:initLinearLayers} for Linear layers with $in\_feature$ input features of the layer and \autoref{eq:initConv2dLayers} for 2 dimensional convolutional layers with $C\_in$ input channels and $kernel\_size$ is a tuple containing the size of the kernel in the 2 dimensions and $*$ is the valid 2D cross-correlation operator. 
+In the previous experiments we see that it seems that SVRG gets comparable and even sometimes better results than Adam and SGD in the setup without batch-normalization. 
+However, we note that all results of all the 3 algorithms worsen a little bit relative to their respective results in the case when we use batch-normalization layers. 
+This might be due to effects of the batch-normalization layers, which help reach better convergence, that are lost when removing these layers.
+To counter this we think that using better initialization methods than the ones used by default in Pytorch could get better results in the setup without batch-normalization layers.
+For now, all experiments we did used the default initialization implemented by Pytorch as of January 2021, some examples are given below.
+\autoref{eq:initLinearLayers} for Linear layers with $in\_feature$ input features of the layer and \autoref{eq:initConv2dLayers} for 2 dimensional convolutional layers with $C\_in$ input channels and $kernel\_size$ is a tuple containing the size of the kernel in the 2 dimensions and $*$ is the valid 2D cross-correlation operator. 
 
 \begin{equation}\label{eq:initLinearLayers}
     \mathcal{U}(-\sqrt{k}, \sqrt{k}) \text{, where } k = \frac{1}{in\_features}
@@ -527,14 +532,14 @@ In the previous experiments we see that it seems that SVRG gets comparable and e
     k = \frac{1}{C\_in * \prod_{i=0}^{1}kernel\_size[i]} 
 \end{equation}
 
-To test the effects of weight algorithm MetaInit described previously, we run an experiment with SVRG on ResNet101 with a classification task of the CIFAR100 dataset with the same hyperparameters as the ones described in \autoref{seq:ResNet101noBN}. We use the same learning rate of $0.005$ and run the training of SVRG for 200 epochs. We run the Gradient descent part of the MetaInit algorithm for 200 epochs with a learning rate of $0.1$, momentum of $0.9$ and $\epsilon = 10^{-5}$.  
+To test the effects of weight initialization we use the previously described algorithm MetaInit. We run an experiment with SVRG on ResNet101 without batch-normalization layers with a task of classification of the CIFAR100 dataset with the same hyperparameters as the ones described in \autoref{seq:ResNet101noBN}. We use the same learning rate of $0.005$ and run the training of SVRG for 200 epochs. We run the Gradient descent part of the MetaInit algorithm for 200 epochs with a learning rate of $0.1$, momentum of $0.9$ and $\epsilon = 10^{-5}$.  
 
-The results on the test set between a run using MetaInit and one not using it are compared in \autoref{fig:MetaInitresults}. We see that the experiment with MetaInit doesn't seem to outperform extremely the algorithm without batch-normalization layers. This probably suggests that the default weight initialization used by Pytorch is already performing well on such an architecture and that MetaInit does not seem to add a lot. 
+The results on the test set between a run using MetaInit and one not using it are compared in \autoref{fig:MetaInitresults}. We see that the experiment with MetaInit doesn't seem to extremely outperform  the algorithm without batch-normalization layers. This probably suggests that the default weight initialization used by Pytorch is already performing well on such an architecture and that MetaInit does not seem to add a lot. 
 
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{figures/MetaInitresults.png}
-    \caption{SVRG on ResNet100 for classification of CIFAR100. Comparison of two experiments with the same hyperparameters and MetaInit applied to one of the experiments.}
+    \caption{SVRG on ResNet101 without batch-normalization layers for classification of CIFAR100. Comparison of two experiments with the same hyperparameters and MetaInit applied to one of the experiments.}
     \label{fig:MetaInitresults}
 \end{figure}
 
@@ -550,9 +555,10 @@ Second, we note that the best results reached with all three algorithms (SGD, Ad
 
 To try to tackle this problem we try using a weight initialization method, MetaInit. However, this doesn't seem to help significantly. 
 
-In summary, we seem to observe that SVRG is not disadvantaged as much as the other algorithms when removing batch-normalization layers from common DNNs but there are other unexplained phenomena that make the results somehow worse.
+In summary, we seem to observe that SVRG is not disadvantaged as much as the other algorithms when removing batch-normalization layers from common DNNs but there are other unexplained phenomena that make the results somehow worse for all optimization algorithms.
 
-We think that future work can be done in order to perform better hyperparameter selection with ResNet18 and ResNet101 by performing a proper cross-validation procedure. Moreover, we think that doing this cross-validation procedure together with MetaInit can help as the better choices of initial weights can allow for more favorable learning rates that were not possible when the batch-normalization layers are removed. Finally we think that experiments should be tested with more DNNs and data-sets and random seeds in order to get more conclusive result. 
+We think that future work can be done in order to perform better hyperparameter selection with ResNet18 and ResNet101 by performing a proper cross-validation procedure. 
+Moreover, we think that doing this cross-validation procedure together with MetaInit can help, as starting training with better choices of initial weights can allow for more favorable learning rates that are not possible to use when the batch-normalization layers are removed and default initialization is used. Finally we think that experiments should be tested with more DNNs, data-sets and random seeds in order to get more conclusive results. 
 
 \makeacks
 
