@@ -27,7 +27,7 @@
 \title{Stochastic variance reduced gradient methods \\for training Deep Neural Networks}
 \author{Alexander Apostolov}
 \institute {École Polytechnique Fédérale de Lausanne}
-\date{November 11th 2020}
+\date{November 20th 2020}
 
 \begin{document}
 
@@ -92,7 +92,7 @@ Analyze the effect of \alert{stochastic variance reduced gradient methods}\footn
     
     Notice that: 
     \begin{itemize}
-        \item $\nabla f_{i_t}(w^{(t-1)}) - \nabla f_{i_t}(\Tilde{w}) + \Tilde{\mu}$ is an unbiased estimate of $\nabla P(w)$:
+        \item $\nabla f_{i_t}(w^{(t-1)}) - \nabla f_{i_t}(\Tilde{w}) + \Tilde{\mu}$ is an unbiased estimate of $\nabla F(w)$:
     $$\mathbb{E}[w^{(t)} | w^{(t-1)}] = w^{(t-1)}-\eta_t \nabla F(w^{(t-1)})$$
         \item Variance is reduced. When $\Tilde{w}$ and $w^{(t)}$ both converge to $w_{\ast}$, then $\Tilde{\mu} \rightarrow 0$. If $\nabla f_i(\Tilde{w}) \rightarrow \nabla f_i(w_{\ast})$, then:
         $$\nabla f_i(w^{(t-1)}) - \nabla f_i(\Tilde{w}) + \Tilde{\mu} \rightarrow \nabla f_i(w^{(t-1)}) - \nabla f_i(w_{\ast}) \rightarrow 0$$
@@ -256,10 +256,10 @@ Analyze the effect of \alert{stochastic variance reduced gradient methods}\footn
 \begin{frame}{Further steps}
     Plans for the rest of the project:
     \begin{itemize}
-        \item Remove BatchNorm layers
-        \item Compensate the effects of removed BatchNorm layers with \textbf{methods of initializing weights} 
+        \item Understand better normalization layers \& replace BatchNorm layers for DNNs
+        \item Compensate the effects of removed BatchNorm layers with \textbf{methods for initializing weights} 
         \begin{itemize}
-            \item[] \textit{e.g.} MetaInit~\citep{dauphin2019metainit}
+            \item[] \textit{e.g.} \textit{MetaInit}~\citep{dauphin2019metainit}
         \end{itemize}
         \item Apply the findings to a \textbf{deeper network} (ResNet50 ?)
     \end{itemize}
@@ -292,7 +292,22 @@ Analyze the effect of \alert{stochastic variance reduced gradient methods}\footn
 \begin{frame}{ResNet}
     Network for image recognition introduced in 2015~\citep{he2015residual}.
     
+    \begin{figure}
+        \centering
+        \includegraphics[scale=1]{midterm presentation/images/building_block_ResNet.png}
+        \caption{Residual learning: a building block.}
+        \label{fig:building_block_resnet}
+    \end{figure}
     
+    
+\end{frame}
+
+\begin{frame}{ResNet18}
+    \begin{figure}
+        \centering
+        \includegraphics[scale=0.35]{midterm presentation/images/ResNet18.png}
+        \label{fig:resnet18}
+    \end{figure}
 \end{frame}
 
 \end{document}
