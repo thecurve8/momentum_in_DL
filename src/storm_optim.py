@@ -3,6 +3,8 @@
 Created on Tue Oct 20 14:45:09 2020
 
 @author: Alexander
+
+Contains an implementation of the STORM algorithm.
 """
 
 import torch

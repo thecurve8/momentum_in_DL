@@ -3,6 +3,8 @@
 Created on Tue Oct 27 12:52:54 2020
 
 @author: Alexander
+
+Contains methods to perform cross-validation on the different optimization algorithms to select their hyperparameters.
 """
 import numpy as np
 from torch.utils.data import DataLoader, Subset

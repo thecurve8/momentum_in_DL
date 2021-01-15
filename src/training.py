@@ -3,14 +3,14 @@
 Created on Mon Oct 19 20:14:02 2020
 
 @author: Alexander
+
+Contains the main methods used to run the experiments with all algorithms.
 """
 
 import torch 
-import torch.nn as nn
 import torch.optim as optim
 from svrg import train_loop_SVRG
 from train_optimizer import train_loop_optimizer
-from storm import train_loop_storm
 from storm_optim import train_loop_storm_optim
 from torch.optim.lr_scheduler import MultiStepLR
 

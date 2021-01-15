@@ -3,6 +3,9 @@
 Created on Mon Oct 19 18:31:24 2020
 
 @author: Alexander
+
+Contains methods to save and load results from experiments.
+
 """
 
 import os

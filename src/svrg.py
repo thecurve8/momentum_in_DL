@@ -3,6 +3,9 @@
 Created on Mon Oct 19 18:32:50 2020
 
 @author: Alexander
+
+Contains an implementation of the SVRG algorithm.
+
 """
 import copy
 import torch

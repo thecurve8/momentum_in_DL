@@ -3,6 +3,8 @@
 Created on Mon Oct 19 18:23:05 2020
 
 @author: Alexander
+
+Contains methods to vizualize the results from the experiments.
 """
 import matplotlib.pyplot as plt
 import numpy as np

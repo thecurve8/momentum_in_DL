@@ -4,6 +4,7 @@ Created on Mon Oct 19 20:05:26 2020
 
 @author: Alexander
 
+Contains methods to train already implemented optimizers.
 """
 
 import torch
