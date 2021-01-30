@@ -238,6 +238,79 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name
         plt.savefig(filename)
     plt.show()
     
+def test_train_accuracy(list_return_dicts, list_x_axis, list_names, model_name, filename = None, ploted_loss="Test"):
+    """
+    Plots comparison of test/validation losses and train losses between experiments.
+
+    Parameters
+    ----------
+    list_return_dicts : list of dict
+        list of return_dict of the different experiments.
+    list_x_axis : list of list
+        List of x_axis for each experiment.
+    list_names : list of str
+        List of labels.
+    model_name : str
+        Name of the used model, will be used in the title.
+    filename : str, optional
+        If specified saves the fig in this file. The default is None.
+    ploted_loss : str, optional
+        Name of the plotted loss, usually Test or Train. The default is "Test".
+
+    Raises
+    ------
+    ValueError
+        If the given axis doesn't math the list of metrics of the corresponding dictionary.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    if len(list_return_dicts) != len(list_x_axis):
+        raise ValueError("The number of return_dict and x_axis is not the same")
+    if len(list_return_dicts) != len(list_names):
+        raise ValueError("The number of return_dict and names is not the same")
+        
+    fig, axs = plt.subplots(1, 2, figsize=(18,7))
+    for i, return_dict in enumerate(list_return_dicts):
+
+        test_loss = return_dict['test_losses']
+        train_loss = return_dict['train_losses']
+        
+        axs[0].plot(list_x_axis[i], test_loss, label=list_names[i])
+        axs[1].plot(list_x_axis[i], train_loss, label=list_names[i])
+        
+        axs[0].scatter(list_x_axis[i][-1], test_loss[-1])
+        axs[1].scatter(list_x_axis[i][-1], train_loss[-1])
+
+        y_coord_annotation = test_loss[-1]*0.985
+        y_coord_annotation_1 = train_loss[-1]*0.985
+
+        axs[0].annotate("{:.2E}".format(test_loss[-1]),
+                    (list_x_axis[i][-1]*1.01, y_coord_annotation),
+                    color=plt.gca().lines[-1].get_color())
+        axs[1].annotate("{:.2E}".format(train_loss[-1]),
+                    (list_x_axis[i][-1]*1.01, y_coord_annotation_1),
+                    color=plt.gca().lines[-1].get_color())
+        
+    axs[0].legend()
+    axs[1].legend()
+    axs[0].set_xlim(0, axs[0].get_xlim()[1]*1.1)
+    axs[1].set_xlim(0, axs[1].get_xlim()[1]*1.1)
+    axs[0].set_title("{} Losses comparison on {}".format(ploted_loss, model_name))
+    axs[1].set_title("Train Losses comparison on {}".format(model_name))
+    axs[0].set_ylabel("{} loss".format(ploted_loss))
+    axs[1].set_ylabel("Train loss")
+    axs[0].set_yscale('log')
+    axs[1].set_yscale('log')
+    axs[0].set_xlabel("Gradient computations")
+    axs[1].set_xlabel("Gradient computations")
+    if filename:
+        plt.savefig(filename)
+    plt.show()
+    
 def plot_CV(return_dict, x_values, values, algo_name, filename=None):
     """
     Compares the results of cross-validation for different runs on a model.
