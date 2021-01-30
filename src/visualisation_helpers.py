@@ -238,7 +238,7 @@ def test_losses_annotated(list_return_dicts, list_x_axis, list_names, model_name
         plt.savefig(filename)
     plt.show()
     
-def test_train_accuracy(list_return_dicts, list_x_axis, list_names, model_name, filename = None, ploted_loss="Test"):
+def test_train_comparison(list_return_dicts, list_x_axis, list_names, model_name, filename = None, ploted_loss="Test"):
     """
     Plots comparison of test/validation losses and train losses between experiments.
 
